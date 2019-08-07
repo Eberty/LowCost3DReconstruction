@@ -86,7 +86,9 @@ int main(int argc, char* argv[]) {
     if (outliers_file) {
       sor.setNegative(true);
       sor.filter(*cloud_filtered);
-      pcl::io::savePLYFileBinary("outliers.ply", *cloud_filtered);
+      size_t pos = output_file_name.rfind(".ply");
+      if (pos != std::string::npos) output_file_name.erase(pos, 4);
+      pcl::io::savePLYFileBinary(output_file_name + "_outliers.ply", *cloud_filtered);
     }
 
     return 0;
