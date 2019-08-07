@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Downsample - that is, reduce the number of points - of a point cloud, using a voxelized grid approach." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }

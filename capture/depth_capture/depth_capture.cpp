@@ -344,6 +344,10 @@ int main(int argc, char **argv) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Connect the Kinect on the laptop, launch this depth acquisition tool and configure the bounding box of "
+                << "the reconstruction volume to minimize the amount of extraneous information captured. Acquire the depth "
+                << "and color images corresponding to each lateral view. Manually position the Kinect to "
+                << "acquire views from the top and bottom of the object, when necessary." << std::endl << std::endl;
       std::cout << desc << std::endl;
       std::cout << std::endl << "Values: " << std::endl;
       std::cout << "  Image capture keys:    " << std::endl;

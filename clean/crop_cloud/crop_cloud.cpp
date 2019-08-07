@@ -188,6 +188,7 @@ bool CropCloud::parserProgramOptions(int argc, char *argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "A filter that allows the user to filter all the data inside of a given box." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return false;
     }

@@ -45,6 +45,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Remove noisy measurements from a point cloud dataset using statistical analysis techniques." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }

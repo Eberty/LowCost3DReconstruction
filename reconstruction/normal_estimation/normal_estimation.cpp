@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     ("help,h", "Print help message")
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
-    ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(10), "N. of neighbors to analyze for each point")
+    ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(20), "N. of neighbors to analyze for each point")
     ("use_reverse_normals,r", "Reverse normals' direction");
 
     // Use a parser to evaluate the command line
@@ -43,6 +43,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Estimate a set of normals for all the points in the input dataset." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
