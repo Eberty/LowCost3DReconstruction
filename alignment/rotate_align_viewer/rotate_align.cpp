@@ -81,7 +81,7 @@ void RotateAlign::saveFiles() {
   }
 
   // Save aligned mesh and quit
-  if (accumulated_file) {
+  if (b_accumulated_file) {
     PointC::Ptr accumulated(new PointC);
 
     pcl::copyPointCloud(*transformed_point_clouds[0], *accumulated);
@@ -89,7 +89,7 @@ void RotateAlign::saveFiles() {
       *accumulated = *accumulated + *transformed_point_clouds[i];
     }
 
-    pcl::io::savePLYFileBinary("accumulated.ply", *accumulated);
+    pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
   }
 
   if (userInterface()) {
@@ -125,7 +125,7 @@ bool RotateAlign::parserProgramOptions(int argc, char *argv[]) {
     desc.add_options()
     ("help,h", "Print help message")
     ("gui,g", "Show a user interface to edit the distances")
-    ("accumulated_file,m", "Saves the accumulated mesh in a .ply file")
+    ("accumulated_file,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated mesh in a .ply file")
     ("capture_name,n", po::value<std::string>(&this->capture_name)->default_value("artefact_srmesh_"), "Prefix of saved ply files")
     ("capture_step,s", po::value<uint>(&this->capture_step)->default_value(20), "Angles (in degrees) for each capture")
     ("num_captures,c", po::value<uint>(&this->num_captures)->default_value(18), "Number of captures")
@@ -139,12 +139,18 @@ bool RotateAlign::parserProgramOptions(int argc, char *argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Automatic-rotation tool to orient the lateral views with regard to the first." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return false;
     }
 
     this->user_interface = vm.count("gui");
-    this->accumulated_file = vm.count("accumulated_file");
+
+    this->b_accumulated_file = vm.count("accumulated_file");
+    if (this->b_accumulated_file) {
+      this->accumulated_file_name = vm["accumulated_file"].as<std::string>();
+    }
+
     this->capture_name = vm["capture_name"].as<std::string>();
     this->capture_step = vm["capture_step"].as<uint>();
     this->num_captures = vm["num_captures"].as<uint>();
@@ -174,7 +180,7 @@ void RotateAlign::printAttributes() {
   std::cout << "Capture name: " << capture_name << std::endl;
   std::cout << "Step: " << capture_step << std::endl;
   std::cout << "N. of captures: " << num_captures << std::endl;
-  std::cout << "Save accumulated file: " << (accumulated_file ? "Yes" : "No") << std::endl;
+  std::cout << "Save accumulated file: " << (b_accumulated_file ? "Yes" : "No") << std::endl;
 }
 
 void RotateAlign::readPointClouds() {

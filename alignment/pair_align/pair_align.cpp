@@ -85,13 +85,13 @@ void PairAlign::saveFiles() {
   pcl::io::savePLYFileBinary(point_cloud_name + "_rotated.ply", *transformed_point_cloud);
 
   // Save aligned mesh
-  if (accumulated_file) {
+  if (b_accumulated_file) {
     PointC::Ptr accumulated(new PointC);
 
     pcl::copyPointCloud(*transformed_point_cloud, *accumulated);
     *accumulated = *accumulated + *point_cloud_ref;
 
-    pcl::io::savePLYFileBinary("accumulated_" + view_name + ".ply", *accumulated);
+    pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
   }
   
   // Quit
@@ -146,7 +146,7 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
     desc.add_options()
     ("help,h", "Print help message")
     ("gui,g", "Show a user interface to the alignment")
-    ("save_accumulated,s", "Saves the accumulated mesh in a .ply file")
+    ("save_accumulated,s", po::value<std::string>(&accumulated_file_name), "Saves the accumulated mesh in a .ply file")
     ("point_cloud,c", po::value<std::string>(&this->point_cloud_file_name)->required(), "Point cloud input file (.ply)")
     ("ref_point_cloud,f", po::value<std::string>(&this->point_cloud_ref_file_name)->required(), "Point cloud reference file (.ply)")
     ("angle,a", po::value<uint>(&this->view_angle), "Point cloud to transform represents an view angle")
@@ -165,6 +165,7 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Rotation tool to orient the views with regard to one reference point cloud." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return false;
     }
@@ -194,7 +195,12 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
     }
 
     this->user_interface = vm.count("gui");
-    this->accumulated_file = vm.count("save_accumulated");
+
+    this->b_accumulated_file = vm.count("save_accumulated");
+    if (this->b_accumulated_file) {
+      this->accumulated_file_name = vm["save_accumulated"].as<std::string>();
+    }
+
     this->x = vm["x"].as<double>();
     this->y = vm["y"].as<double>();
     this->z = vm["z"].as<double>();

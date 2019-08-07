@@ -59,7 +59,8 @@ class RotateAlign : public QMainWindow {
 
   // Declaration of variables
   bool user_interface;
-  bool accumulated_file;
+  bool b_accumulated_file;
+  std::string accumulated_file_name;
   std::string capture_name;
   uint capture_step;
   uint num_captures;

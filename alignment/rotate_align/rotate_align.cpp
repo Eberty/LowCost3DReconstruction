@@ -27,7 +27,8 @@ int main(int argc, char **argv) {
     double distance_x;
     double distance_y;
     double distance_z;
-    bool accumulated_file;
+    bool b_accumulated_file;
+    std::string accumulated_file_name;
 
     // Parse command-line options
     namespace po = boost::program_options;
@@ -42,7 +43,7 @@ int main(int argc, char **argv) {
     ("distance_x,x", po::value<double>(&distance_x)->default_value(44.0), "Distance in X from kinect to the center of the table")
     ("distance_y,y", po::value<double>(&distance_y)->default_value(60.0), "Distance in Y from kinect to the center of the table")
     ("distance_z,z", po::value<double>(&distance_z)->default_value(632.5), "Distance in Z from kinect to the center of the table")
-    ("accumulated_file,a", "Saves the accumulated mesh in a .ply file");
+    ("accumulated_file,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated mesh in a .ply file");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Automatic-rotation tool to orient the lateral views with regard to the first." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
@@ -60,12 +62,16 @@ int main(int argc, char **argv) {
     distance_x = vm["distance_x"].as<double>();
     distance_y = vm["distance_y"].as<double>();
     distance_z = vm["distance_z"].as<double>();
-    accumulated_file = vm.count("accumulated_file");
+
+    b_accumulated_file = vm.count("accumulated_file");
+    if (b_accumulated_file) {
+      accumulated_file_name = vm["accumulated_file"].as<std::string>();
+    }
 
     std::cout << "Capture name: " << capture_name << std::endl;
     std::cout << "Step: " << capture_step << std::endl;
     std::cout << "N. of captures: " << num_captures << std::endl;
-    std::cout << "Save accumulated file: " << (accumulated_file ? "Yes" : "No") << std::endl;
+    std::cout << "Save accumulated file: " << (b_accumulated_file ? "Yes" : "No") << std::endl;
 
     // Convenient typedefs
     typedef pcl::PointXYZRGBNormal PointT;
@@ -117,8 +123,8 @@ int main(int argc, char **argv) {
     viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "Accumulated Cloud");
 
     // Save accumulated aligned mesh
-    if (accumulated_file) {
-      pcl::io::savePLYFileBinary("accumulated.ply", *accumulated);
+    if (b_accumulated_file) {
+      pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
     }
     // Show in GUI
     while (!viewer.wasStopped()) {  // Display the visualiser until 'q' key is pressed

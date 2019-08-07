@@ -63,7 +63,8 @@ class PairAlign : public QMainWindow {
 
   // Declaration of variables
   bool user_interface;
-  bool accumulated_file;
+  bool b_accumulated_file;
+  std::string accumulated_file_name;
   uint view_angle;
   std::string view_name;
   std::string point_cloud_file_name;
