@@ -152,12 +152,12 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
     ("angle,a", po::value<uint>(&this->view_angle), "Point cloud to transform represents an view angle")
     ("top,t", "Point cloud to transform represents the top view")
     ("bottom,b", "Point cloud to transform represents the bottom view")
-    ("x,x", po::value<double>(&this->x)->default_value(0.0), "Translation in X")
-    ("y,y", po::value<double>(&this->y)->default_value(0.0), "Translation in Y")
-    ("z,z", po::value<double>(&this->z)->default_value(0.0), "Translation in Z")
-    ("roll,r", po::value<double>(&this->roll)->default_value(0.0), "Rotation in X (Roll)")
-    ("pitch,p", po::value<double>(&this->pitch)->default_value(0.0), "Rotation in Y (Pitch)")
-    ("yaw,y", po::value<double>(&this->yaw)->default_value(0.0), "Rotation in Z (Yaw)");
+    ("x", po::value<double>(&this->x)->default_value(0.0), "Translation in X")
+    ("y", po::value<double>(&this->y)->default_value(0.0), "Translation in Y")
+    ("z", po::value<double>(&this->z)->default_value(0.0), "Translation in Z")
+    ("roll", po::value<double>(&this->roll)->default_value(0.0), "Rotation in X (Roll)")
+    ("pitch", po::value<double>(&this->pitch)->default_value(0.0), "Rotation in Y (Pitch)")
+    ("yaw", po::value<double>(&this->yaw)->default_value(0.0), "Rotation in Z (Yaw)");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;

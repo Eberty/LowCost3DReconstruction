@@ -336,7 +336,7 @@ int main(int argc, char **argv) {
     ("left_plane,l", po::value<int>(&left_plane)->default_value(0), "Left plane threshold in mm")
     ("right_plane,r", po::value<int>(&right_plane)->default_value(640), "Right plane threshold in mm")
     ("top_plane,t", po::value<int>(&top_plane)->default_value(0), "Top plane threshold in mm")
-    ("bottom_plane,b", po::value<int>(&bottom_plane)->default_value(480), "Bttom plane threshold in mm");
+    ("bottom_plane,b", po::value<int>(&bottom_plane)->default_value(480), "Bottom plane threshold in mm");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -360,7 +360,7 @@ int main(int argc, char **argv) {
 
     capture_name = vm["capture_name"].as<std::string>();
     
-    capture_step = vm["capture_step"].as<int>();
+    capture_step = vm["capture_step"].as<unsigned int>();
     if (capture_step <= 0 || capture_step >= 360) {
 		std::cout << "capture_step must be in (0, 360) range, the value will be setting to 1." << std::endl;
 		capture_step = 1;
