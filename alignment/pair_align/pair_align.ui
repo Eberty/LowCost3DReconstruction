@@ -18,9 +18,19 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="vertical_layout">
       <item>
-       <layout class="QHBoxLayout" name="horizontal_layout_xyz">
-        <item>
+       <layout class="QGridLayout" name="aling_layout">
+        <item row="0" column="0">
          <layout class="QGridLayout" name="grid_layout_x">
+          <item row="1" column="1">
+           <widget class="QLCDNumber" name="number_x">
+            <property name="digitCount">
+             <number>7</number>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QSlider" name="slider_x">
             <property name="minimum">
@@ -41,8 +51,32 @@
             </property>
            </widget>
           </item>
+         </layout>
+        </item>
+        <item row="1" column="3">
+         <layout class="QGridLayout" name="grid_layout_scale">
+          <item row="1" column="0">
+           <widget class="QSlider" name="slider_scale">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>20000</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_scale">
+            <property name="text">
+             <string>Scale</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_x">
+           <widget class="QLCDNumber" name="number_scale">
             <property name="digitCount">
              <number>7</number>
             </property>
@@ -53,15 +87,8 @@
           </item>
          </layout>
         </item>
-        <item>
+        <item row="0" column="1">
          <layout class="QGridLayout" name="grid_layout_y">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_y">
-            <property name="text">
-             <string>Y</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QLCDNumber" name="number_y">
             <property name="digitCount">
@@ -74,6 +101,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QSlider" name="slider_y">
+            <property name="minimum">
+             <number>-4800</number>
+            </property>
             <property name="maximum">
              <number>4800</number>
             </property>
@@ -82,9 +112,84 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_y">
+            <property name="text">
+             <string>Y</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
-        <item>
+        <item row="1" column="2">
+         <layout class="QGridLayout" name="grid_layout_yaw">
+          <item row="1" column="0">
+           <widget class="QSlider" name="slider_yaw">
+            <property name="minimum">
+             <number>-1800</number>
+            </property>
+            <property name="maximum">
+             <number>1800</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLCDNumber" name="number_yaw">
+            <property name="digitCount">
+             <number>7</number>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_yaw">
+            <property name="text">
+             <string>Yaw</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1">
+         <layout class="QGridLayout" name="grid_layout_pitch">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_pitch">
+            <property name="text">
+             <string>Pitch</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLCDNumber" name="number_pitch">
+            <property name="digitCount">
+             <number>7</number>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSlider" name="slider_pitch">
+            <property name="minimum">
+             <number>-1800</number>
+            </property>
+            <property name="maximum">
+             <number>1800</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2">
          <layout class="QGridLayout" name="grid_layout_z">
           <item row="1" column="1">
            <widget class="QLCDNumber" name="number_z">
@@ -98,8 +203,11 @@
           </item>
           <item row="1" column="0">
            <widget class="QSlider" name="slider_z">
+            <property name="minimum">
+             <number>-10240</number>
+            </property>
             <property name="maximum">
-             <number>20480</number>
+             <number>10240</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -115,48 +223,15 @@
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="Line" name="line_xyz">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="save_button">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>130</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>130</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Rotate and Save</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontal_layout_rpy">
-        <item>
+        <item row="1" column="0">
          <layout class="QGridLayout" name="grid_layout_roll">
           <item row="1" column="0">
            <widget class="QSlider" name="slider_roll">
+            <property name="minimum">
+             <number>-1800</number>
+            </property>
             <property name="maximum">
-             <number>3600</number>
+             <number>1800</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -182,90 +257,34 @@
           </item>
          </layout>
         </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_pitch">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_pitch">
+        <item row="0" column="3">
+         <layout class="QHBoxLayout" name="horizontal_layout">
+          <item>
+           <widget class="QPushButton" name="save_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>130</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
-             <string>Pitch</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_pitch">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_pitch">
-            <property name="maximum">
-             <number>3600</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <string>Rotate and Save</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_yaw">
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_yaw">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_yaw">
-            <property name="maximum">
-             <number>3600</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_yaw">
-            <property name="text">
-             <string>Yaw</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line_rpy">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontal_spacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>140</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>

@@ -17,6 +17,8 @@
 // Project files
 #include "pair_align.h"
 
+#define NORMALIZE_SCALE 10000.0
+
 #define NORMALIZE_VALUE 10.0
 #define DECIMAL_PLACES 1
 
@@ -45,16 +47,20 @@ PairAlign::PairAlign(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   connect(ui->slider_roll, SIGNAL(valueChanged(int)), this, SLOT(rollSliderValueChanged(int)));
   connect(ui->slider_pitch, SIGNAL(valueChanged(int)), this, SLOT(pitchSliderValueChanged(int)));
   connect(ui->slider_yaw, SIGNAL(valueChanged(int)), this, SLOT(yawSliderValueChanged(int)));
+  connect(ui->slider_scale, SIGNAL(valueChanged(int)), this, SLOT(scaleSliderValueChanged(int)));
 
   // Set up the QVTK window for point cloud visualization
   viewer.reset(new pcl::visualization::PCLVisualizer("Matrix transformation", false));
   ui->pcl_widget->SetRenderWindow(viewer->getRenderWindow());
   viewer->setupInteractor(ui->pcl_widget->GetInteractor(), ui->pcl_widget->GetRenderWindow());
-  viewer->addCoordinateSystem(10.0);
+  viewer->addCoordinateSystem(1.0);
   viewer->setBackgroundColor(0, 0, 0, 0);
 
   // Defines point clouds
-  readPointClouds();
+  if (!readPointClouds()) {
+    user_interface = false;
+    return;
+  }
 
   // Set values of distances (x, y, z) and rotation (roll, pitch, yaw)
   ui->slider_x->setValue(x * NORMALIZE_VALUE);
@@ -63,6 +69,7 @@ PairAlign::PairAlign(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   ui->slider_roll->setValue(roll * NORMALIZE_VALUE);
   ui->slider_pitch->setValue(pitch * NORMALIZE_VALUE);
   ui->slider_yaw->setValue(yaw * NORMALIZE_VALUE);
+  ui->slider_scale->setValue(scale * NORMALIZE_SCALE);
 
   // Visualization
   viewer->resetCamera();
@@ -136,6 +143,12 @@ void PairAlign::yawSliderValueChanged(int value) {
   updateView();
 }
 
+void PairAlign::scaleSliderValueChanged(int value) {
+  this->scale = value / NORMALIZE_SCALE;
+  ui->number_scale->display(QString::number(this->scale, 'f', 4));
+  updateView();
+}
+
 bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
   try {
     // Parse command-line options
@@ -149,15 +162,13 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
     ("save_accumulated,s", po::value<std::string>(&accumulated_file_name), "Saves the accumulated mesh in a .ply file")
     ("point_cloud,c", po::value<std::string>(&this->point_cloud_file_name)->required(), "Point cloud input file (.ply)")
     ("ref_point_cloud,f", po::value<std::string>(&this->point_cloud_ref_file_name)->required(), "Point cloud reference file (.ply)")
-    ("angle,a", po::value<uint>(&this->view_angle), "Point cloud to transform represents an view angle")
-    ("top,t", "Point cloud to transform represents the top view")
-    ("bottom,b", "Point cloud to transform represents the bottom view")
     ("x", po::value<double>(&this->x)->default_value(0.0), "Translation in X")
     ("y", po::value<double>(&this->y)->default_value(0.0), "Translation in Y")
     ("z", po::value<double>(&this->z)->default_value(0.0), "Translation in Z")
     ("roll", po::value<double>(&this->roll)->default_value(0.0), "Rotation in X (Roll)")
     ("pitch", po::value<double>(&this->pitch)->default_value(0.0), "Rotation in Y (Pitch)")
-    ("yaw", po::value<double>(&this->yaw)->default_value(0.0), "Rotation in Z (Yaw)");
+    ("yaw", po::value<double>(&this->yaw)->default_value(0.0), "Rotation in Z (Yaw)")
+    ("scale", po::value<double>(&this->scale)->default_value(1.0), "Scales the point cloud");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -170,27 +181,11 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
       return false;
     }
 
-    if ((vm.count("point_cloud") && vm.count("ref_point_cloud")) && (vm.count("angle") || vm.count("top") || vm.count("bottom"))) {
+    if (vm.count("point_cloud") && vm.count("ref_point_cloud")) {
       this->point_cloud_file_name = vm["point_cloud"].as<std::string>();
       this->point_cloud_ref_file_name = vm["ref_point_cloud"].as<std::string>();
-
-      if ((vm.count("angle") && vm.count("top")) || (vm.count("angle") && vm.count("bottom")) ||
-          (vm.count("top") && vm.count("bottom"))) {
-        std::cout << "The command options: 'angle', 'top' and 'bottom'"
-                  << " can not be used together. Choose only one of them" << std::endl;
-        return false;
-      }
-
-      if (vm.count("angle")) {
-        this->view_name = std::to_string(vm["angle"].as<uint>() % 360);
-      } else if (vm.count("top")) {
-        this->view_name = "top";
-      } else if (vm.count("bottom")) {
-        this->view_name = "bottom";
-      }
     } else {
-      std::cout << "Correct mode of use: " << argv[0] << " -c pc_input.ply -f pc_ref.ply --[angle | top | bottom] [opts]"
-                << std::endl;
+      std::cout << "Correct mode of use: " << argv[0] << " -c pc_input.ply -f pc_ref.ply [opts]" << std::endl;
       return false;
     }
 
@@ -207,23 +202,25 @@ bool PairAlign::parserProgramOptions(int argc, char *argv[]) {
     this->roll = vm["roll"].as<double>();
     this->pitch = vm["pitch"].as<double>();
     this->yaw = vm["yaw"].as<double>();
+    this->scale = vm["scale"].as<double>();
 
     return true;
   } catch (boost::program_options::error &msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (...) {
-    std::cerr << "Some error has occurred." << std::endl;
+    std::cout << "Some error has occurred." << std::endl;
   }
   return false;
 }
 
 void PairAlign::performOperationWithoutGui() {
-  readPointClouds();
-  transformPointCloud();
-  saveFiles();
+  if (readPointClouds()) {
+    transformPointCloud();
+    saveFiles();
+  }
 }
 
-void PairAlign::readPointClouds() {
+bool PairAlign::readPointClouds() {
   // Alocate point clouds
   point_cloud.reset(new PointC);
   point_cloud_ref.reset(new PointC);
@@ -237,7 +234,8 @@ void PairAlign::readPointClouds() {
     pcl::removeNaNFromPointCloud(*point_cloud_ref, *point_cloud_ref, indices);
     if (userInterface()) addPointCloudToViewer(point_cloud_ref, point_cloud_ref_file_name, false);
   } else {
-    throw "Couldn't read input ref file";
+    std::cout << "Couldn't read input ref file" << std::endl;
+    return false;
   }
 
   // Point cloud to tarnslate
@@ -250,8 +248,11 @@ void PairAlign::readPointClouds() {
     pcl::copyPointCloud(*point_cloud, *transformed_point_cloud);
     if (userInterface()) addPointCloudToViewer(transformed_point_cloud, point_cloud_file_name, true);
   } else {
-    throw "Couldn't read input file";
+    std::cout << "Couldn't read input file" << std::endl;
+    return false;
   }
+
+  return true;
 }
 
 void PairAlign::updateView() {
@@ -262,9 +263,9 @@ void PairAlign::updateView() {
 }
 
 void PairAlign::transformPointCloud() {
-  // Translation to origin and alignment according to rotation parameters
+  // Alignment according to transformation values
+  // Translate
   Eigen::Affine3f transform = Eigen::Affine3f::Identity();
-  // Distance from kinect to the center of the table: Translating to center
   transform.translation() << this->x, this->y, this->z;
   pcl::transformPointCloud(*point_cloud, *transformed_point_cloud, transform);
   // Rotate
@@ -272,6 +273,10 @@ void PairAlign::transformPointCloud() {
   transform.rotate(Eigen::AngleAxisf((this->roll * M_PI) / 180, Eigen::Vector3f::UnitX()));
   transform.rotate(Eigen::AngleAxisf((this->pitch * M_PI) / 180, Eigen::Vector3f::UnitY()));
   transform.rotate(Eigen::AngleAxisf((this->yaw * M_PI) / 180, Eigen::Vector3f::UnitZ()));
+  pcl::transformPointCloud(*transformed_point_cloud, *transformed_point_cloud, transform);
+  // Scale
+  transform = Eigen::Affine3f::Identity();
+  transform(0, 0) = transform(1, 1) = transform(2, 2) = this->scale;
   pcl::transformPointCloud(*transformed_point_cloud, *transformed_point_cloud, transform);
 }
 

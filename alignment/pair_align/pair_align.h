@@ -44,6 +44,7 @@ class PairAlign : public QMainWindow {
   void rollSliderValueChanged(int value);
   void pitchSliderValueChanged(int value);
   void yawSliderValueChanged(int value);
+  void scaleSliderValueChanged(int value);
 
  protected:
   pcl::visualization::PCLVisualizer::Ptr viewer;
@@ -55,7 +56,7 @@ class PairAlign : public QMainWindow {
   bool parserProgramOptions(int argc, char *argv[]);
   void performOperationWithoutGui();
 
-  void readPointClouds();
+  bool readPointClouds();
   void updateView();
 
   void transformPointCloud();
@@ -65,8 +66,6 @@ class PairAlign : public QMainWindow {
   bool user_interface;
   bool b_accumulated_file;
   std::string accumulated_file_name;
-  uint view_angle;
-  std::string view_name;
   std::string point_cloud_file_name;
   std::string point_cloud_ref_file_name;
   double x;
@@ -75,6 +74,7 @@ class PairAlign : public QMainWindow {
   double roll;
   double pitch;
   double yaw;
+  double scale;
 
   // Interface
   Ui::PairAlign *ui;
