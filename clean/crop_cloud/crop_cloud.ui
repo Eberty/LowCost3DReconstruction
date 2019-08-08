@@ -15,119 +15,196 @@
   </property>
   <widget class="QWidget" name="central_widget">
    <layout class="QGridLayout" name="grid_layout">
+    <item row="1" column="0">
+     <widget class="QVTKWidget" name="pcl_widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>300</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="vertical_layout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontal_layout_max">
-        <item>
-         <layout class="QGridLayout" name="grid_layout_max_x">
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_max_x">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_max_x">
-            <property name="text">
-             <string>Max X</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_max_x">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_max_y">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_max_y">
-            <property name="text">
-             <string>Max Y</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_max_y">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_max_y">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_max_z">
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_max_z">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_max_z">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_max_z">
-            <property name="text">
-             <string>Max Z</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line_max">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+     <layout class="QGridLayout" name="crop_layout">
+      <item row="0" column="1">
+       <layout class="QGridLayout" name="grid_layout_max_y">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_max_y">
+          <property name="text">
+           <string>Max Y</string>
           </property>
          </widget>
         </item>
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_max_y">
+          <property name="digitCount">
+           <number>7</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_max_y">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="grid_layout_max_x">
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_max_x">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_max_x">
+          <property name="digitCount">
+           <number>7</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_max_x">
+          <property name="text">
+           <string>Max X</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="2">
+       <layout class="QGridLayout" name="grid_layout_min_z">
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_min_z">
+          <property name="digitCount">
+           <number>7</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_min_z">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_min_z">
+          <property name="text">
+           <string>Min Z</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1">
+       <layout class="QGridLayout" name="grid_layout_min_y">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_min_y">
+          <property name="text">
+           <string>Min Y</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_min_y">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_min_y">
+          <property name="digitCount">
+           <number>7</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="2">
+       <layout class="QGridLayout" name="grid_layout_max_z">
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_max_z">
+          <property name="digitCount">
+           <number>7</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_max_z">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_max_z">
+          <property name="text">
+           <string>Max Z</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="3">
+       <layout class="QHBoxLayout" name="button_layout">
         <item>
          <widget class="QPushButton" name="save_button">
           <property name="sizePolicy">
@@ -155,150 +232,39 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontal_layout_min">
-        <item>
-         <layout class="QGridLayout" name="grid_layout_min_x">
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_min_x">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_min_x">
-            <property name="text">
-             <string>Min X</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_min_x">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_min_y">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_min_y">
-            <property name="text">
-             <string>Min Y</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_min_y">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_min_y">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="grid_layout_min_z">
-          <item row="1" column="1">
-           <widget class="QLCDNumber" name="number_min_z">
-            <property name="digitCount">
-             <number>7</number>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="slider_min_z">
-            <property name="minimum">
-             <number>-10000</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_min_z">
-            <property name="text">
-             <string>Min Z</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line_min">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="grid_layout_min_x">
+        <item row="1" column="0">
+         <widget class="QSlider" name="slider_min_x">
+          <property name="minimum">
+           <number>-10000</number>
           </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontal_spacer">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_min_x">
+          <property name="text">
+           <string>Min X</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>140</width>
-            <height>0</height>
-           </size>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLCDNumber" name="number_min_x">
+          <property name="digitCount">
+           <number>7</number>
           </property>
-         </spacer>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+         </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QVTKWidget" name="pcl_widget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>300</width>
-          <height>300</height>
-         </size>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
