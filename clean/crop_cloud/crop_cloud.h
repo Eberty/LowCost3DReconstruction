@@ -55,7 +55,7 @@ class CropCloud : public QMainWindow {
   bool parserProgramOptions(int argc, char *argv[]);
   void performOperationWithoutGui();
 
-  void readPointCloud();
+  bool readPointCloud();
   void updateView();
   
   void drawPointCloud(PointC::Ptr &pc, const std::string point_cloud_name, const bool is_outside);

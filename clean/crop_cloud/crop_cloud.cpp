@@ -50,7 +50,10 @@ CropCloud::CropCloud(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   viewer->setupInteractor(ui->pcl_widget->GetInteractor(), ui->pcl_widget->GetRenderWindow());
 
   // Defines point clouds
-  readPointCloud();
+  if (!readPointCloud()) {
+    user_interface = false;
+    return;
+  }
 
   // Set values for crop box
   ui->slider_min_x->setValue(min_x * NORMALIZE_VALUE);
@@ -219,11 +222,12 @@ bool CropCloud::parserProgramOptions(int argc, char *argv[]) {
 }
 
 void CropCloud::performOperationWithoutGui() {
-  readPointCloud();
-  saveFiles();
+  if (readPointCloud()) {
+    saveFiles();
+  }
 }
 
-void CropCloud::readPointCloud() {
+bool CropCloud::readPointCloud() {
   // Alocate point clouds
   point_cloud.reset(new PointC);
   point_cloud_inside.reset(new PointC);
@@ -236,8 +240,11 @@ void CropCloud::readPointCloud() {
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(*point_cloud, *point_cloud, indices);
   } else {
-    throw "Couldn't open point cloud file";
+    std::cout << "Couldn't open point cloud file" << std::endl;
+    return false;
   }
+
+  return true;
 }
 
 void CropCloud::updateView() {
