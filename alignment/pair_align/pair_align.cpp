@@ -18,6 +18,7 @@
 #include "pair_align.h"
 
 #define NORMALIZE_SCALE 10000.0
+#define SCALE_DECIMAL_PLACES 4
 
 #define NORMALIZE_VALUE 10.0
 #define DECIMAL_PLACES 1
@@ -69,6 +70,7 @@ PairAlign::PairAlign(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   ui->slider_roll->setValue(roll * NORMALIZE_VALUE);
   ui->slider_pitch->setValue(pitch * NORMALIZE_VALUE);
   ui->slider_yaw->setValue(yaw * NORMALIZE_VALUE);
+
   ui->slider_scale->setValue(scale * NORMALIZE_SCALE);
 
   // Visualization
@@ -100,7 +102,7 @@ void PairAlign::saveFiles() {
 
     pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
   }
-  
+
   // Quit
   if (userInterface()) {
     QApplication::quit();
@@ -145,7 +147,7 @@ void PairAlign::yawSliderValueChanged(int value) {
 
 void PairAlign::scaleSliderValueChanged(int value) {
   this->scale = value / NORMALIZE_SCALE;
-  ui->number_scale->display(QString::number(this->scale, 'f', 4));
+  ui->number_scale->display(QString::number(this->scale, 'f', SCALE_DECIMAL_PLACES));
   updateView();
 }
 
@@ -232,7 +234,11 @@ bool PairAlign::readPointClouds() {
     // Cleaning
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(*point_cloud_ref, *point_cloud_ref, indices);
-    if (userInterface()) addPointCloudToViewer(point_cloud_ref, point_cloud_ref_file_name, false);
+
+    if (userInterface()) {
+      addPointCloudToViewer(point_cloud_ref, point_cloud_ref_file_name, false);
+      addPointCloudToViewer(transformed_point_cloud, point_cloud_file_name, true);
+    }
   } else {
     std::cout << "Couldn't read input ref file" << std::endl;
     return false;
@@ -246,7 +252,10 @@ bool PairAlign::readPointClouds() {
     pcl::removeNaNFromPointCloud(*point_cloud, *point_cloud, indices);
     // Copy
     pcl::copyPointCloud(*point_cloud, *transformed_point_cloud);
-    if (userInterface()) addPointCloudToViewer(transformed_point_cloud, point_cloud_file_name, true);
+
+    if (userInterface()) {
+      addPointCloudToViewer(transformed_point_cloud, point_cloud_file_name, true);
+    }
   } else {
     std::cout << "Couldn't read input file" << std::endl;
     return false;
@@ -281,7 +290,7 @@ void PairAlign::transformPointCloud() {
 }
 
 void PairAlign::addPointCloudToViewer(PointC::Ptr &pc, const std::string point_cloud_name, const bool is_tranformed) {
-  PointCloudColorHandler color_hander(pc, 255*!is_tranformed, 255*is_tranformed, 0);
+  PointCloudColorHandler color_hander(pc, 255 * !is_tranformed, 255 * is_tranformed, 0);
   viewer->addPointCloud(pc, color_hander, point_cloud_name);
   viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, point_cloud_name);
 }

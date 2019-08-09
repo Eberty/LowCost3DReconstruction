@@ -36,7 +36,7 @@ CropCloud::CropCloud(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   }
 
   // Connect sliders, buttons and their functions
-  connect(ui->save_button, SIGNAL(clicked()), this, SLOT(saveFiles()));
+  connect(ui->save_button, SIGNAL(clicked()), this, SLOT(cropAndSave()));
   connect(ui->slider_min_x, SIGNAL(valueChanged(int)), this, SLOT(minXSliderValueChanged(int)));
   connect(ui->slider_min_y, SIGNAL(valueChanged(int)), this, SLOT(minYSliderValueChanged(int)));
   connect(ui->slider_min_z, SIGNAL(valueChanged(int)), this, SLOT(minZSliderValueChanged(int)));
@@ -76,7 +76,7 @@ bool CropCloud::userInterface() {
   return user_interface;
 }
 
-void CropCloud::saveFiles() {
+void CropCloud::cropAndSave() {
   // Remove .ply extention
   std::string point_cloud_name = eraseLastSubStr(point_cloud_file, ".ply");
 
@@ -99,7 +99,7 @@ void CropCloud::saveFiles() {
     crop_box.filter(*cloud_filtered);
     pcl::io::savePLYFileBinary(point_cloud_name + "_unused_points.ply", *cloud_filtered);
   }
-  
+
   // Quit
   if (userInterface()) {
     QApplication::quit();
@@ -214,16 +214,16 @@ bool CropCloud::parserProgramOptions(int argc, char *argv[]) {
 
     return true;
   } catch (boost::program_options::error &msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (...) {
-    std::cerr << "Some error has occurred." << std::endl;
+    std::cout << "Some error has occurred." << std::endl;
   }
   return false;
 }
 
 void CropCloud::performOperationWithoutGui() {
   if (readPointCloud()) {
-    saveFiles();
+    cropAndSave();
   }
 }
 
@@ -254,8 +254,8 @@ void CropCloud::updateView() {
   crop_box.setMin(Eigen::Vector4f(min_x, min_y, min_z, 1.0));
   crop_box.setMax(Eigen::Vector4f(max_x, max_y, max_z, 1.0));
   crop_box.setInputCloud(point_cloud);
-  crop_box.filter(*point_cloud_inside);
 
+  crop_box.filter(*point_cloud_inside);
   drawPointCloud(point_cloud_inside, "inside", false);
 
   crop_box.setNegative(true);
@@ -274,7 +274,7 @@ void CropCloud::drawCube() {
 void CropCloud::drawPointCloud(PointC::Ptr &pc, const std::string point_cloud_name, const bool is_outside) {
   viewer->removePointCloud(point_cloud_name);
 
-  PointCloudColorHandler color_hander(pc, 255*is_outside, 0, 255*!is_outside);
+  PointCloudColorHandler color_hander(pc, 255 * is_outside, 0, 255 * !is_outside);
   viewer->addPointCloud(pc, color_hander, point_cloud_name);
   viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, point_cloud_name);
 }

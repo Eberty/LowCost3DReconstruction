@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
       throw std::string("Couldn't load input file");
     }
 
-    std::cerr << "Cloud before filtering: " << std::endl;
-    std::cerr << *cloud << std::endl;
+    std::cout << "Cloud before filtering: " << std::endl;
+    std::cout << *cloud << std::endl;
 
     // Create the filtering object
     pcl::VoxelGrid<PointT> sor;
@@ -72,15 +72,15 @@ int main(int argc, char* argv[]) {
     sor.setLeafSize(leaf_size, leaf_size, leaf_size);
     sor.filter(*cloud_filtered);
 
-    std::cerr << "Cloud after filtering: " << std::endl;
-    std::cerr << *cloud_filtered << std::endl;
+    std::cout << "Cloud after filtering: " << std::endl;
+    std::cout << *cloud_filtered << std::endl;
     pcl::io::savePLYFileBinary(output_file_name, *cloud_filtered);
 
     return 0;
   } catch (boost::program_options::error& msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (std::string msg) {
-    std::cerr << msg << std::endl;
+    std::cout << msg << std::endl;
   }
 
   return -1;

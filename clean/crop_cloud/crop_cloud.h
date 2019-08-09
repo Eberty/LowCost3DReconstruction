@@ -37,7 +37,7 @@ class CropCloud : public QMainWindow {
   std::string eraseLastSubStr(std::string str, const std::string to_erase);
 
  public Q_SLOTS:
-  void saveFiles();
+  void cropAndSave();
   void minXSliderValueChanged(int value);
   void minYSliderValueChanged(int value);
   void minZSliderValueChanged(int value);
@@ -57,7 +57,7 @@ class CropCloud : public QMainWindow {
 
   bool readPointCloud();
   void updateView();
-  
+
   void drawPointCloud(PointC::Ptr &pc, const std::string point_cloud_name, const bool is_outside);
   void drawCube();
 

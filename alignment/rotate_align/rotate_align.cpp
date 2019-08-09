@@ -27,6 +27,8 @@ int main(int argc, char **argv) {
     double distance_x;
     double distance_y;
     double distance_z;
+
+    bool b_visualize;
     bool b_accumulated_file;
     std::string accumulated_file_name;
 
@@ -37,6 +39,7 @@ int main(int argc, char **argv) {
     po::options_description desc("Options");
     desc.add_options()
     ("help,h", "Print help message")
+    ("visualize,v", "Visualization of transformation")
     ("capture_name,n", po::value<std::string>(&capture_name)->default_value("artefact_srmesh_"), "Prefix of saved files")
     ("capture_step,s", po::value<uint>(&capture_step)->default_value(20), "Angles (in degrees) for each capture")
     ("num_captures,c", po::value<uint>(&num_captures)->default_value(18), "Number of captures")
@@ -63,6 +66,8 @@ int main(int argc, char **argv) {
     distance_y = vm["distance_y"].as<double>();
     distance_z = vm["distance_z"].as<double>();
 
+    b_visualize = vm.count("visualize");
+
     b_accumulated_file = vm.count("accumulated_file");
     if (b_accumulated_file) {
       accumulated_file_name = vm["accumulated_file"].as<std::string>();
@@ -85,6 +90,8 @@ int main(int argc, char **argv) {
       std::string ply_file = std::string(capture_name) + std::to_string(i * capture_step) + ".ply";
       if (pcl::io::loadPLYFile<PointT>(ply_file, *point_clouds[i]) != -1) {
         std::cout << "MESH " << (i * capture_step) << " LOADED ALRIGHT!" << std::endl;
+      } else {
+        std::cout << ply_file << " is not a valid file." << std::endl;
       }
     }
 
@@ -113,23 +120,27 @@ int main(int argc, char **argv) {
       *accumulated = *accumulated + *point_clouds[i];
     }
 
-    // Visualization
-    pcl::visualization::PointCloudColorHandlerRGBField<PointT> accumulated_color_hander(accumulated);
-
-    pcl::visualization::PCLVisualizer viewer("Matrix transformation");
-    viewer.addPointCloud(accumulated, accumulated_color_hander, "Accumulated Cloud");
-    viewer.addCoordinateSystem(1.0, "cloud", 0);
-    viewer.setBackgroundColor(0, 0, 0, 0);
-    viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "Accumulated Cloud");
-
     // Save accumulated aligned mesh
     if (b_accumulated_file) {
       pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
     }
-    // Show in GUI
-    while (!viewer.wasStopped()) {  // Display the visualiser until 'q' key is pressed
-      viewer.spinOnce();
+
+    // Visualization
+    if (b_visualize) {
+      pcl::visualization::PointCloudColorHandlerRGBField<PointT> accumulated_color_hander(accumulated);
+
+      pcl::visualization::PCLVisualizer viewer("Matrix transformation");
+      viewer.addPointCloud(accumulated, accumulated_color_hander, "Accumulated Cloud");
+      viewer.addCoordinateSystem(1.0, "cloud", 0);
+      viewer.setBackgroundColor(0, 0, 0, 0);
+      viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "Accumulated Cloud");
+
+      // Show in GUI
+      while (!viewer.wasStopped()) {  // Display the visualiser until 'q' key is pressed
+        viewer.spinOnce();
+      }
     }
+
     return 0;
   } catch (boost::program_options::error &msg) {
     std::cerr << "ERROR: " << msg.what() << std::endl;

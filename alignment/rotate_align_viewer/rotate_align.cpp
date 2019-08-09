@@ -160,9 +160,9 @@ bool RotateAlign::parserProgramOptions(int argc, char *argv[]) {
 
     return true;
   } catch (boost::program_options::error &msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (...) {
-    std::cerr << "Some error has occurred." << std::endl;
+    std::cout << "Some error has occurred." << std::endl;
   }
   return false;
 }
@@ -200,6 +200,8 @@ void RotateAlign::readPointClouds() {
       if (userInterface()) {
         addPointCloudToViewer(std::to_string(i * capture_step), i);
       }
+    } else {
+      std::cout << ply_file << " is not a valid file." << std::endl;
     }
   }
 }

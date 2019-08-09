@@ -58,7 +58,8 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Compute the surface reconstruction of a point cloud using the Poisson surface reconstruction (pcl::surface::Poisson)." << std::endl << std::endl;
+      std::cout << "Compute the surface reconstruction of a point cloud using the Poisson surface reconstruction "
+                   "(pcl::surface::Poisson)." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
@@ -110,9 +111,9 @@ int main(int argc, char* argv[]) {
 
     return 0;
   } catch (boost::program_options::error& msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (const char* msg) {
-    std::cerr << msg << std::endl;
+    std::cout << msg << std::endl;
   }
 
   return -1;

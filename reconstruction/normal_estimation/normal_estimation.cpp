@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     std::string input_file_name;
     std::string output_file_name;
     uint number_of_neighbors;
-    bool use_reverse_normals;
+    bool reverse_normals;
 
     // Parse command-line options
     namespace po = boost::program_options;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
     ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(20), "N. of neighbors to analyze for each point")
-    ("use_reverse_normals,r", "Reverse normals' direction");
+    ("reverse_normals,r", "Reverse normals' direction");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     }
 
     number_of_neighbors = vm["neighbors"].as<uint>();
-    use_reverse_normals = vm.count("use_reverse_normals");
+    reverse_normals = vm.count("reverse_normals");
 
     // Load point cloud
     PointC::Ptr cloud(new PointC);
@@ -69,7 +69,8 @@ int main(int argc, char* argv[]) {
     ne.setInputCloud(cloud);
 
     // Create an empty kdtree representation, and pass it to the normal estimation object.
-    // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+    // Its content will be filled inside the object, based on the given input dataset (as no other search surface is
+    // given).
     pcl::search::KdTree<PointT>::Ptr tree(new pcl::search::KdTree<PointT>());
     ne.setSearchMethod(tree);
 
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
 
     // Use a certain number of neighbors
     ne.setKSearch(number_of_neighbors);
-    
+
     // Compute 3D centroid
     Eigen::Vector4f centroid;
     pcl::compute3DCentroid(*cloud, centroid);
@@ -88,9 +89,10 @@ int main(int argc, char* argv[]) {
     ne.compute(*normals);
 
     // The setViewPoint function will flip the normals of the whole point cloud.
-    // Once we use the  centroid of the set of points as view point, we need to invert the normals to outside the object.
-    if (!use_reverse_normals) {
-      for(size_t i = 0; i < normals->size(); i++) {
+    // Once we use the  centroid of the set of points as view point, we need to invert the normals to outside the
+    // object.
+    if (!reverse_normals) {
+      for (size_t i = 0; i < normals->size(); i++) {
         normals->points[i].normal_x *= -1;
         normals->points[i].normal_y *= -1;
         normals->points[i].normal_z *= -1;
@@ -104,9 +106,9 @@ int main(int argc, char* argv[]) {
 
     return 0;
   } catch (boost::program_options::error& msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+    std::cout << "ERROR: " << msg.what() << std::endl;
   } catch (std::string msg) {
-    std::cerr << msg << std::endl;
+    std::cout << msg << std::endl;
   }
 
   return -1;

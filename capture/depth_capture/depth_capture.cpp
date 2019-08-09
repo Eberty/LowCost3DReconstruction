@@ -344,10 +344,12 @@ int main(int argc, char **argv) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Connect the Kinect on the laptop, launch this depth acquisition tool and configure the bounding box of "
-                << "the reconstruction volume to minimize the amount of extraneous information captured. Acquire the depth "
-                << "and color images corresponding to each lateral view. Manually position the Kinect to "
-                << "acquire views from the top and bottom of the object, when necessary." << std::endl << std::endl;
+      std::cout
+          << "Connect the Kinect on the laptop, launch this depth acquisition tool and configure the bounding box of "
+          << "the reconstruction volume to minimize the amount of extraneous information captured. Acquire the depth "
+          << "and color images corresponding to each lateral view. Manually position the Kinect to "
+          << "acquire views from the top and bottom of the object, when necessary." << std::endl
+          << std::endl;
       std::cout << desc << std::endl;
       std::cout << std::endl << "Values: " << std::endl;
       std::cout << "  Image capture keys:    " << std::endl;
@@ -363,14 +365,13 @@ int main(int argc, char **argv) {
     }
 
     capture_name = vm["capture_name"].as<std::string>();
-    
+
     capture_step = vm["capture_step"].as<unsigned int>();
     if (capture_step <= 0 || capture_step >= 360) {
-		std::cout << "capture_step must be in (0, 360) range, the value will be setting to 1." << std::endl;
-		capture_step = 1;
-	}
-    
-    
+      std::cout << "capture_step must be in (0, 360) range, the value will be setting to 1." << std::endl;
+      capture_step = 1;
+    }
+
     sr_size = vm["sr_size"].as<unsigned int>();
     depth_min = vm["depth_min"].as<int>();
     depth_max = vm["depth_max"].as<int>();
