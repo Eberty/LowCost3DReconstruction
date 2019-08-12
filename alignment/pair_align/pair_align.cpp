@@ -57,13 +57,13 @@ PairAlign::PairAlign(int argc, char *argv[], QWidget *parent) : QMainWindow(pare
   viewer->addCoordinateSystem(1.0);
   viewer->setBackgroundColor(0, 0, 0, 0);
 
-  // Defines point clouds
+  // Read point clouds
   if (!readPointClouds()) {
     user_interface = false;
     return;
   }
 
-  // Set values of distances (x, y, z) and rotation (roll, pitch, yaw)
+  // Set values of distances (x, y, z), rotation (roll, pitch, yaw) and scale
   ui->slider_x->setValue(x * NORMALIZE_VALUE);
   ui->slider_y->setValue(y * NORMALIZE_VALUE);
   ui->slider_z->setValue(z * NORMALIZE_VALUE);
@@ -93,7 +93,7 @@ void PairAlign::saveFiles() {
   // Save ply with transformed points
   pcl::io::savePLYFileBinary(point_cloud_name + "_rotated.ply", *transformed_point_cloud);
 
-  // Save aligned mesh
+  // Save file with all point clouds aligned
   if (b_accumulated_file) {
     PointC::Ptr accumulated(new PointC);
 
@@ -237,14 +237,13 @@ bool PairAlign::readPointClouds() {
 
     if (userInterface()) {
       addPointCloudToViewer(point_cloud_ref, point_cloud_ref_file_name, false);
-      addPointCloudToViewer(transformed_point_cloud, point_cloud_file_name, true);
     }
   } else {
     std::cout << "Couldn't read input ref file" << std::endl;
     return false;
   }
 
-  // Point cloud to tarnslate
+  // Point cloud to translate
   if (pcl::io::loadPLYFile<PointT>(point_cloud_file_name, *point_cloud) != -1) {
     std::cout << "MESH " << point_cloud_file_name << " LOADED ALRIGHT!" << std::endl;
     // Cleaning
