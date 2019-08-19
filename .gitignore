@@ -8,3 +8,5 @@ clean/crop_cloud/build/*
 clean/outlier_removal/build/*
 reconstruction/poisson_reconstruction/build/*
 reconstruction/normal_estimation/build/*
+executables/*
+TODO/*

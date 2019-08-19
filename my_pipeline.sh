@@ -3,7 +3,7 @@
 # Copy this script into a folder with images
 
 # Extract images from video if need
-# ffmpeg -i video.avi -vf fps=2 image-%3d.png
+# ffmpeg -i video.avi -vf fps=3 image-%3d.png
 
 # Verify if the argument is a valid file (Use it for now)
 if [[ ! -f "$1" || ${1: -4} != ".ply" ]]; then
@@ -16,7 +16,7 @@ MESH_FILE=$1
 # Set images directory
 IMAGES_DIR=$PWD
 # Set colmap command
-COLMAP=colmap
+COLMAP_BIN=colmap
 # Set openMVS directory
 OPENMVS_DIR=/usr/local/bin/OpenMVS
 
@@ -30,18 +30,18 @@ cd $TEMP_DIR
 # ----------------------------------------------------------------------
 
 # Run SFM: sparse point cloud and camera pose estimation
-$COLMAP feature_extractor --database_path $TEMP_DIR/database.db --image_path $TEMP_DIR --SiftExtraction.use_gpu=false
-$COLMAP exhaustive_matcher --database_path $TEMP_DIR/database.db --SiftMatching.use_gpu=false
+$COLMAP_BIN feature_extractor --database_path $TEMP_DIR/database.db --image_path $TEMP_DIR --SiftExtraction.use_gpu=false
+$COLMAP_BIN exhaustive_matcher --database_path $TEMP_DIR/database.db --SiftMatching.use_gpu=false
 mkdir $TEMP_DIR/sparse
-$COLMAP mapper --database_path $TEMP_DIR/database.db --image_path $TEMP_DIR --output_path $TEMP_DIR/sparse
+$COLMAP_BIN mapper --database_path $TEMP_DIR/database.db --image_path $TEMP_DIR --output_path $TEMP_DIR/sparse
 
 # Debug: convert colmap project into TXT files
 # mkdir $TEMP_DIR/txt
-# $COLMAP model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/txt --output_type TXT
+# $COLMAP_BIN model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/txt --output_type TXT
 
 # Convert colmap project into an OpenMVS project
-$COLMAP model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/model.ply --output_type PLY
-$COLMAP model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/model.nvm --output_type NVM
+$COLMAP_BIN model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/model.ply --output_type PLY
+$COLMAP_BIN model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/model.nvm --output_type NVM
 $OPENMVS_DIR/InterfaceVisualSFM $TEMP_DIR/model.nvm
 
 # ----------------------------------------------------------------------
@@ -73,10 +73,10 @@ $OPENMVS_DIR/InterfaceVisualSFM $TEMP_DIR/model.nvm
 # --accumulated_file ${ARTEFACT_NAME}_aligned.ply --gui
 
 # $EXE_DIR/pair_align --point_cloud ${ARTEFACT_NAME}_srmesh_top.ply --ref_point_cloud ${ARTEFACT_NAME}_aligned.ply \
-# --accumulated_file ${ARTEFACT_NAME}_top_aligned.ply --gui
+# --save_accumulated ${ARTEFACT_NAME}_top_aligned.ply --gui
 
 # $EXE_DIR/pair_align --point_cloud ${ARTEFACT_NAME}_srmesh_bottom.ply --ref_point_cloud ${ARTEFACT_NAME}_top_aligned.ply \
-# --accumulated_file ${ARTEFACT_NAME}_top_bottom_aligned.ply --gui
+# --save_accumulated ${ARTEFACT_NAME}_top_bottom_aligned.ply --gui
 
 # Step 4: Fine alignment [recommended] -> clouds_registration (ICP) or incremental_registration
 # This step is nesessary because the antecessor step just made a rigid transform
@@ -107,7 +107,7 @@ $OPENMVS_DIR/InterfaceVisualSFM $TEMP_DIR/model.nvm
 # TODO: Use --target $TEMP_DIR/model.ply or model_croped_normal_mesh.ply in note below
 
 # Step 8: Normal estimation
-# $EXE_DIR/normal_estimation --neighbors 50
+# $EXE_DIR/normal_estimation --neighbors 50 \
 # --input ${ARTEFACT_NAME}_top_bottom_aligned_refined_cleaned_croped_registered.ply \
 # --output ${ARTEFACT_NAME}_top_bottom_aligned_refined_cleaned_croped_registered_normal.ply
 
@@ -142,7 +142,7 @@ $OPENMVS_DIR/InterfaceVisualSFM $TEMP_DIR/model.nvm
 $OPENMVS_DIR/ReconstructMesh $TEMP_DIR/model.mvs --mesh-file $TEMP_DIR/mesh_file.ply --smooth 0
 
 # Mesh texturing for computing a sharp and accurate texture to color the mesh
-$OPENMVS_DIR/TextureMesh $TEMP_DIR/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 0.2 --empty-color 16744231
+$OPENMVS_DIR/TextureMesh $TEMP_DIR/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231
 
 # Texturization of bottom view
 # Step 10: Texturization -> bottom_view_texturization
