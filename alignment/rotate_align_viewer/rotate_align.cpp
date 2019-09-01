@@ -139,7 +139,7 @@ bool RotateAlign::parserProgramOptions(int argc, char *argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Automatic-rotation tool to orient the lateral views with regard to the first." << std::endl << std::endl;
+      std::cout << "Semi-automatic rotation tool to orient the lateral views with regard to the first." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return false;
     }
