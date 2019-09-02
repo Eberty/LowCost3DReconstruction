@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     std::string output_file_name;
     uint number_of_neighbors;
     bool reverse_normals;
+    bool use_centroid;
 
     // Parse command-line options
     namespace po = boost::program_options;
@@ -35,7 +36,8 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
     ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(20), "N. of neighbors to analyze for each point")
-    ("reverse_normals,r", "Reverse normals' direction");
+    ("reverse_normals,r", "Reverse normals' direction")
+    ("use_centroid,c", "Use the centroid as defined view point");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -57,6 +59,7 @@ int main(int argc, char* argv[]) {
 
     number_of_neighbors = vm["neighbors"].as<uint>();
     reverse_normals = vm.count("reverse_normals");
+    use_centroid = vm.count("use_centroid");
 
     // Load point cloud
     PointC::Ptr cloud(new PointC);
@@ -80,18 +83,20 @@ int main(int argc, char* argv[]) {
     // Use a certain number of neighbors
     ne.setKSearch(number_of_neighbors);
 
-    // Compute 3D centroid
-    Eigen::Vector4f centroid;
-    pcl::compute3DCentroid(*cloud, centroid);
-    ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
+    if (use_centroid) {
+      // Compute 3D centroid
+      Eigen::Vector4f centroid;
+      pcl::compute3DCentroid(*cloud, centroid);
+      ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
+    }
 
     // Compute the normals
     ne.compute(*normals);
 
     // The setViewPoint function will flip the normals of the whole point cloud.
-    // Once we use the  centroid of the set of points as view point, we need to invert the normals to outside the
-    // object.
-    if (!reverse_normals) {
+    // NOTE: Once use the centroid of the set of points as view point, we need to invert the normals
+    // to outside the object.
+    if ((use_centroid && !reverse_normals) || (!use_centroid && reverse_normals)) {
       for (size_t i = 0; i < normals->size(); i++) {
         normals->points[i].normal_x *= -1;
         normals->points[i].normal_y *= -1;
