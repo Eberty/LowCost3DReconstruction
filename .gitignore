@@ -2,6 +2,7 @@ alignment/fine_registration/build/*
 alignment/pair_align/build/*
 alignment/rotate_align/build/*
 alignment/rotate_align_viewer/build/*
+alignment/accumulate_clouds/build/*
 
 capture/super_resolution/build/*
 capture/depth_capture/build/*
@@ -9,6 +10,7 @@ capture/depth_capture/build/*
 clean/cloud_downsampling/build/*
 clean/crop_cloud/build/*
 clean/outlier_removal/build/*
+clean/scale/build/*
 
 reconstruction/poisson_reconstruction/build/*
 reconstruction/normal_estimation/build/*
