@@ -329,7 +329,7 @@ int main(int argc, char **argv) {
     desc.add_options()
     ("help,h", "Print help message")
     ("capture_name,n", po::value<std::string>(&capture_name)->default_value("artefact"), "Name for saved files")
-    ("capture_step,s", po::value<unsigned int>(&capture_step)->default_value(20), "Angles (in degrees) for each capture")
+    ("capture_step,s", po::value<unsigned int>(&capture_step)->default_value(20), "Angles (degrees) for each capture")
     ("sr_size,z", po::value<unsigned int>(&sr_size)->default_value(16), "Number of sr images for each capture")
     ("depth_min,m", po::value<int>(&depth_min)->default_value(0), "Minimum value for depth (threshold)")
     ("depth_max,M", po::value<int>(&depth_max)->default_value(790), "Maximum value for depth (threshold)")

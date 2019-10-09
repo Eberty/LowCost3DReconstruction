@@ -43,10 +43,10 @@ int main(int argc, char* argv[]) {
     ("cloud,c", po::value<std::string>(&cloud_src_file_name)->required(), "Input cloud file (.ply)")
     ("target,t", po::value<std::string>(&cloud_tgt_file_name)->required(), "Input target file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
-    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated point cloud (aligned + target) in a .ply file")
-    ("distance_threshold", po::value<double>(&distance_threshold)->default_value(200), "The maximum distance threshold between two correspondent points in source <-> target")
+    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated point cloud in a .ply file")
+    ("distance_threshold", po::value<double>(&distance_threshold)->default_value(200), "The maximum distance threshold between two correspondent points")
     ("max_iterations", po::value<int>(&max_iterations)->default_value(100), "The maximum number of iterations the internal optimization should run for")
-    ("transformation_epsilon", po::value<double>(&transformation_epsilon)->default_value(1e-8), "Maximum allowable difference between two consecutive transformations in order for an optimization to be considered as having converged to the final solution")
+    ("transformation_epsilon", po::value<double>(&transformation_epsilon)->default_value(1e-8), "Maximum allowable difference between two consecutive transformations to be considered as having converged")
     ("euclidean_fitness_epsilon", po::value<double>(&euclidean_fitness_epsilon)->default_value(0.5), "Maximum allowed Euclidean error between two consecutive steps in the ICP loop, before the algorithm is considered to have converged");
 
     // Use a parser to evaluate the command line
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
       cloud_tgt_file_name = vm["target"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input_cloud.ply -t input_target.ply -o output.ply [opts]");
+      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -c input_cloud.ply -t input_target.ply -o output.ply [opts]");
     }
 
     max_iterations = vm["max_iterations"].as<int>();
@@ -75,23 +75,23 @@ int main(int argc, char* argv[]) {
     distance_threshold = vm["distance_threshold"].as<double>();
     transformation_epsilon = vm["transformation_epsilon"].as<double>();
     euclidean_fitness_epsilon = vm["euclidean_fitness_epsilon"].as<double>();
-    
+
     b_accumulated_file = vm.count("accumulated");
     if (b_accumulated_file) {
       accumulated_file_name = vm["accumulated"].as<std::string>();
     }
-    
+
     PointC::Ptr cloud_src(new PointC);
     PointC::Ptr cloud_tgt(new PointC);
     PointC::Ptr registered(new PointC);
 
     // Load point clouds data from disk
-    if (pcl::io::loadPLYFile<pcl::PointXYZRGBNormal>(cloud_src_file_name, *cloud_src) == -1) {
+    if (pcl::io::loadPLYFile<PointT>(cloud_src_file_name, *cloud_src) == -1) {
       throw std::string("Couldn't load input cloud file");
     }
     std::cout << "Loaded " << cloud_src->size() << " data points from " << cloud_src_file_name << std::endl;
 
-    if (pcl::io::loadPLYFile<pcl::PointXYZRGBNormal>(cloud_tgt_file_name, *cloud_tgt) == -1) {
+    if (pcl::io::loadPLYFile<PointT>(cloud_tgt_file_name, *cloud_tgt) == -1) {
       throw std::string("Couldn't load input target file");
     }
     std::cout << "Loaded " << cloud_tgt->size() << " data points from " << cloud_tgt_file_name << std::endl;
@@ -117,7 +117,8 @@ int main(int argc, char* argv[]) {
 
     // Obtain the transformation that aligned "cloud_src" to "registered"
     Eigen::Matrix4f transformation = icp.getFinalTransformation();
-    std::cout << "Has converged:" << (icp.hasConverged() ? "True" : "False") << " score: " << icp.getFitnessScore() << std::endl;
+    std::cout << "Has converged: " << (icp.hasConverged() ? "True" : "False") << std::endl
+              << "Score: " << icp.getFitnessScore() << std::endl;
     std::cout << transformation << std::endl;
 
     pcl::io::savePLYFileBinary(output_file_name, *registered);

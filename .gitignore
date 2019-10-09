@@ -15,5 +15,5 @@ clean/scale/build/*
 reconstruction/poisson_reconstruction/build/*
 reconstruction/normal_estimation/build/*
 
-executables/*
+bin/*
 TODO/*

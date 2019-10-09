@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     ("help,h", "Print help message")
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
-    ("leaf_size,s", po::value<float>(&leaf_size)->default_value(1.0f), "Defines the leaf size for pcl::VoxelGrid filter in meters");
+    ("leaf_size,s", po::value<float>(&leaf_size)->default_value(1.0f), "Leaf size for pcl::VoxelGrid filter in meters");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Downsample - that is, reduce the number of points - of a point cloud, using a voxelized grid approach." << std::endl << std::endl;
+      std::cout << "Reduce the number of points of a point cloud, using a voxelized grid approach." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }

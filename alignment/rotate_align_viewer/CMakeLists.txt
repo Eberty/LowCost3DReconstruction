@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(rotate_align)
+project(rotate_align_viewer)
 
 add_compile_options(-std=c++11)
 add_definitions(-Wall)
