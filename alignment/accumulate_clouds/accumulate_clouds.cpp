@@ -9,7 +9,6 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/registration/icp.h>
 
 // Boost library
 #include <boost/program_options.hpp>
@@ -29,9 +28,9 @@ int main(int argc, char* argv[]) {
 
     // Define command-line options
     po::options_description desc("Options");
-    desc.add_options()("help,h", "Print help message")(
-        "inputs,i", po::value<std::vector<std::string>>(&clouds_file_names)->multitoken(), "Input clouds files (.ply)")(
-        "output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)");
+    desc.add_options()("help,h", "Print help message")
+    ("inputs,i", po::value<std::vector<std::string>>(&clouds_file_names)->multitoken(), "Input clouds files (.ply)")
+    ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -56,7 +55,7 @@ int main(int argc, char* argv[]) {
     // Load point clouds data from disk
     for (size_t i = 0; i < clouds_file_names.size(); i++) {
       if (pcl::io::loadPLYFile<PointT>(clouds_file_names[i], *cloud) == -1) {
-        throw std::string("Couldn't load input cloud file");
+        throw std::string("Couldn't load input cloud file: " + clouds_file_names[i]);
       }
       std::cout << "Loaded " << cloud->size() << " data points from " << clouds_file_names[i] << std::endl;
       *accumulated = *accumulated + *cloud;

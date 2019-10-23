@@ -21,8 +21,8 @@ typedef pcl::PointCloud<PointT> PointC;
 int main(int argc, char* argv[]) {
   try {
     // Declaration of variables
-    std::string cloud_src_file_name;
-    std::string cloud_tgt_file_name;
+    std::string src_file_name;
+    std::string tgt_file_name;
     std::string output_file_name;
 
     std::string accumulated_file_name;
@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
     po::options_description desc("Options");
     desc.add_options()
     ("help,h", "Print help message")
-    ("cloud,c", po::value<std::string>(&cloud_src_file_name)->required(), "Input cloud file (.ply)")
-    ("target,t", po::value<std::string>(&cloud_tgt_file_name)->required(), "Input target file (.ply)")
+    ("cloud,c", po::value<std::string>(&src_file_name)->required(), "Input cloud file (.ply)")
+    ("target,t", po::value<std::string>(&tgt_file_name)->required(), "Input target file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
     ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated point cloud in a .ply file")
     ("distance_threshold", po::value<double>(&distance_threshold)->default_value(200), "The maximum distance threshold between two correspondent points")
@@ -60,11 +60,11 @@ int main(int argc, char* argv[]) {
     }
 
     if (vm.count("cloud") && vm.count("target") && vm.count("output")) {
-      cloud_src_file_name = vm["cloud"].as<std::string>();
-      cloud_tgt_file_name = vm["target"].as<std::string>();
+      src_file_name = vm["cloud"].as<std::string>();
+      tgt_file_name = vm["target"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -c input_cloud.ply -t input_target.ply -o output.ply [opts]");
+      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -c cloud.ply -t target.ply -o output.ply [opts]");
     }
 
     max_iterations = vm["max_iterations"].as<int>();
@@ -86,15 +86,15 @@ int main(int argc, char* argv[]) {
     PointC::Ptr registered(new PointC);
 
     // Load point clouds data from disk
-    if (pcl::io::loadPLYFile<PointT>(cloud_src_file_name, *cloud_src) == -1) {
+    if (pcl::io::loadPLYFile<PointT>(src_file_name, *cloud_src) == -1) {
       throw std::string("Couldn't load input cloud file");
     }
-    std::cout << "Loaded " << cloud_src->size() << " data points from " << cloud_src_file_name << std::endl;
+    std::cout << "Loaded " << cloud_src->size() << " data points from " << src_file_name << std::endl;
 
-    if (pcl::io::loadPLYFile<PointT>(cloud_tgt_file_name, *cloud_tgt) == -1) {
+    if (pcl::io::loadPLYFile<PointT>(tgt_file_name, *cloud_tgt) == -1) {
       throw std::string("Couldn't load input target file");
     }
-    std::cout << "Loaded " << cloud_tgt->size() << " data points from " << cloud_tgt_file_name << std::endl;
+    std::cout << "Loaded " << cloud_tgt->size() << " data points from " << tgt_file_name << std::endl;
 
     // More exact feature alignment
     pcl::IterativeClosestPoint<PointT, PointT> icp;
