@@ -1,0 +1,9 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Compute normals for point sets">
+  <Param type="RichInt" value="50" name="K"/>
+  <Param type="RichBool" value="false" name="flipFlag"/>
+  <Param x="0" y="0" z="0" type="RichPoint3f" name="viewPos"/>
+ </filter>
+ <filter name="Normalize Vertex Normals"/>
+</FilterScript>
