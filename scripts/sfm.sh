@@ -60,10 +60,15 @@ $COLMAP_BIN model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_
 $COLMAP_BIN model_converter --input_path $TEMP_DIR/sparse/0 --output_path $TEMP_DIR/model.nvm --output_type NVM
 $OPENMVS_DIR/InterfaceVisualSFM $TEMP_DIR/model.nvm
 
+$OPENMVS_DIR/DensifyPointCloud $TEMP_DIR/model.mvs
+$OPENMVS_DIR/ReconstructMesh $TEMP_DIR/model_dense.mvs --remove-spurious 20
+$OPENMVS_DIR/RefineMesh --resolution-level 1 $TEMP_DIR/model_dense_mesh.mvs
+$OPENMVS_DIR/TextureMesh --export-type ply $TEMP_DIR/model_dense_mesh_refine.mvs
+
 # ----------------------------------------------------------------------
 
 # Remove unnecessary points that no belong to object
-$EXE_DIR/outlier_removal --input $TEMP_DIR/model.ply --output $TEMP_DIR/model.ply --neighbors 100 --dev_mult 0.2
+$EXE_DIR/outlier_removal --input $TEMP_DIR/model_dense.ply --output $TEMP_DIR/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 0.1
 
 # ----------------------------------------------------------------------
 
