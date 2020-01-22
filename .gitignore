@@ -4,10 +4,10 @@ alignment/rotate_align/build/*
 capture/super_resolution/build/*
 capture/depth_capture/build/*
 
-clean/cloud_downsampling/build/*
-clean/outlier_removal/build/*
-clean/scale/build/*
-clean/transform/build/*
+tools/cloud_downsampling/build/*
+tools/outlier_removal/build/*
+tools/scale/build/*
+tools/transform/build/*
 
 build/*
 
