@@ -35,7 +35,7 @@ sudo apt -y install g++ \
 
 # Compile and install PCL
 mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_apps=ON -DBUILD_examples=ON -DBUILD_GPU=OFF ..
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_apps=ON -DBUILD_examples=ON -DBUILD_GPU=ON ..
 make -j2 && sudo make install
 
 cd $CUR_DIR
