@@ -1,0 +1,4 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Normalize Vertex Normals"/>
+</FilterScript>
