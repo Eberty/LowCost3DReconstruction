@@ -104,12 +104,12 @@ int main(int argc, char **argv) {
       Eigen::Affine3f transform = Eigen::Affine3f::Identity();
       // Distance from kinect to the center of the table
       transform.translation() << distance_x, distance_y, distance_z;
-      pcl::transformPointCloud(*point_clouds[i], *point_clouds[i], transform);
+      pcl::transformPointCloudWithNormals(*point_clouds[i], *point_clouds[i], transform);
       // Rotate around center
       transform = Eigen::Affine3f::Identity();
       Eigen::Matrix3f rotation(Eigen::AngleAxisf(-DEG2RAD(i * capture_step + i * 1.17), Eigen::Vector3f::UnitY()));
       transform.rotate(rotation);
-      pcl::transformPointCloud(*point_clouds[i], *point_clouds[i], transform);
+      pcl::transformPointCloudWithNormals(*point_clouds[i], *point_clouds[i], transform);
       pcl::io::savePLYFileBinary(capture_name + std::to_string(i * capture_step) + "_rotated.ply", *point_clouds[i]);
     }
 

@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     // Scale
     Eigen::Affine3f transform = Eigen::Affine3f::Identity();
     transform(0, 0) = transform(1, 1) = transform(2, 2) = scale;
-    pcl::transformPointCloud(*point_cloud, *cloud_scaled, transform);
+    pcl::transformPointCloudWithNormals(*point_cloud, *cloud_scaled, transform);
 
     pcl::io::savePLYFileBinary(output_file_name, *cloud_scaled);
 
