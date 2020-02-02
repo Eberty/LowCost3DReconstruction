@@ -9,9 +9,9 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/registration/icp.h>
-#include <pcl/registration/icp_nl.h>
-#include <pcl/registration/incremental_registration.h>
+
+#include <pcl/common/transforms.h>
+#include <pcl/common/centroid.h>
 
 // Boost library
 #include <boost/program_options.hpp>
@@ -30,10 +30,10 @@ int main(int argc, char* argv[]) {
     std::string accumulated_file_name;
     bool b_accumulated_file;
 
-    int max_iterations;
-    double distance_threshold;
-    double transformation_epsilon;
-    double euclidean_fitness_epsilon;
+    double roll;
+    double pitch;
+    double yaw;
+    double elevation;
 
     // Parse command-line options
     namespace po = boost::program_options;
@@ -45,11 +45,11 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&src_file_name)->required(), "Input cloud file (.ply)")
     ("target,t", po::value<std::string>(&tgt_file_name)->required(), "Input target file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
-    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Save the accumulated point cloud")
-    ("distance_threshold", po::value<double>(&distance_threshold)->default_value(0.1), "The maximum distance threshold between two correspondent points")
-    ("max_iterations", po::value<int>(&max_iterations)->default_value(20), "The maximum number of iterations the internal optimization should run for")
-    ("transformation_epsilon", po::value<double>(&transformation_epsilon)->default_value(1e-8), "Maximum allowable difference between two consecutive transformations to be considered as having converged")
-    ("euclidean_fitness_epsilon", po::value<double>(&euclidean_fitness_epsilon)->default_value(0.5), "Maximum allowed Euclidean error between two consecutive steps in the ICP loop, before the algorithm is considered to have converged");
+    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated point cloud in a .ply file")
+    ("roll,r", po::value<double>(&roll)->default_value(0.0), "Rotation in X - degrees (Roll)")
+    ("pitch,p", po::value<double>(&pitch)->default_value(0.0), "Rotation in Y - degrees (Pitch)")
+    ("yaw,y", po::value<double>(&yaw)->default_value(0.0), "Rotation in Z - degrees (Yaw)")
+    ("elevation,e", po::value<double>(&elevation)->default_value(0.0), "Translation in Y");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -69,23 +69,18 @@ int main(int argc, char* argv[]) {
       throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -t target.ply -o output.ply [opts]");
     }
 
-    max_iterations = vm["max_iterations"].as<int>();
-    if (max_iterations <= 0) {
-      throw std::string("max_iterations needs to be greater than zero.");
-    }
-
-    distance_threshold = vm["distance_threshold"].as<double>();
-    transformation_epsilon = vm["transformation_epsilon"].as<double>();
-    euclidean_fitness_epsilon = vm["euclidean_fitness_epsilon"].as<double>();
-
     b_accumulated_file = vm.count("accumulated");
     if (b_accumulated_file) {
       accumulated_file_name = vm["accumulated"].as<std::string>();
     }
 
+    roll = vm["roll"].as<double>();
+    pitch = vm["pitch"].as<double>();
+    yaw = vm["yaw"].as<double>();
+    elevation = vm["elevation"].as<double>();
+
     PointC::Ptr cloud_src(new PointC);
     PointC::Ptr cloud_tgt(new PointC);
-    PointC::Ptr registered(new PointC);
 
     // Load point clouds data from disk
     if (pcl::io::loadPLYFile<PointT>(src_file_name, *cloud_src) == -1) {
@@ -98,37 +93,42 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "Loaded " << cloud_tgt->size() << " data points from " << tgt_file_name << std::endl;
 
-    // More exact feature alignment
-    pcl::IterativeClosestPoint<PointT, PointT> icp;
+    Eigen::Affine3f transform;
 
-    // Set the input source and target
-    icp.setInputCloud(cloud_src);
-    icp.setInputTarget(cloud_tgt);
+    // Translate point cloud centroid to origin
+    Eigen::Vector4f src_centroid;
+    pcl::compute3DCentroid(*cloud_src, src_centroid);
+    transform = Eigen::Affine3f::Identity();
+    transform.translation() << -src_centroid[0], -src_centroid[1], -src_centroid[2];
+    pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
 
-    // Set the max correspondence distance (e.g., correspondences with higher distances will be ignored)
-    icp.setMaxCorrespondenceDistance(distance_threshold);
-    // Set the maximum number of iterations (criterion 1)
-    icp.setMaximumIterations(max_iterations);
-    // Set the transformation epsilon (criterion 2)
-    icp.setTransformationEpsilon(transformation_epsilon);
-    // Set the euclidean distance difference epsilon (criterion 3)
-    icp.setEuclideanFitnessEpsilon(euclidean_fitness_epsilon);
+    // Rotation
+    transform = Eigen::Affine3f::Identity();
+    Eigen::Matrix3f rotation;
+    rotation = Eigen::AngleAxisf(DEG2RAD(roll), Eigen::Vector3f::UnitX()) *
+               Eigen::AngleAxisf(DEG2RAD(pitch), Eigen::Vector3f::UnitY()) *
+               Eigen::AngleAxisf(DEG2RAD(yaw), Eigen::Vector3f::UnitZ());
+    transform.rotate(rotation);
+    pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
 
-    // Perform the alignment
-    icp.align(*registered);
-
-    // Obtain the transformation that aligned "cloud_tgt" to "registered"
-    Eigen::Matrix4f transformation = icp.getFinalTransformation();
-    std::cout << "Has converged: " << (icp.hasConverged() ? "True" : "False") << std::endl
-              << "Score: " << icp.getFitnessScore() << std::endl;
-    std::cout << transformation << std::endl;
-
-    pcl::io::savePLYFileBinary(output_file_name, *registered);
+    // Translate src point cloud centroid to tgt centroid
+    Eigen::Vector4f tgt_centroid;
+    pcl::compute3DCentroid(*cloud_tgt, tgt_centroid);
+    transform = Eigen::Affine3f::Identity();
+    transform.translation() << tgt_centroid[0], tgt_centroid[1], tgt_centroid[2];
+    pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
+ 
+    // Translate src point cloud in Y axis
+    transform = Eigen::Affine3f::Identity();
+    transform.translation() << 0, elevation, 0;
+    pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
+    
+    pcl::io::savePLYFileBinary(output_file_name, *cloud_src);
 
     if (b_accumulated_file) {
       PointC::Ptr accumulated(new PointC);
-      pcl::copyPointCloud(*registered, *accumulated);
-      *accumulated = *accumulated + *cloud_tgt;
+      pcl::copyPointCloud(*cloud_src, *accumulated);
+      *accumulated += *cloud_tgt;
       pcl::io::savePLYFileBinary(accumulated_file_name, *accumulated);
     }
 

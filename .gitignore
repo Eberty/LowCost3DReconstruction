@@ -1,4 +1,5 @@
 alignment/fine_registration/build/*
+alignment/pair_align/build/*
 alignment/rotate_align/build/*
 
 capture/super_resolution/build/*

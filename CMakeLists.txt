@@ -12,6 +12,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/fine_registration/")
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/pair_align/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/rotate_align/")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution/")
