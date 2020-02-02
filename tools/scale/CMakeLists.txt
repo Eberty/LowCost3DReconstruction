@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(scale)
 
-add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Wall)
 
 find_package(PCL REQUIRED)
