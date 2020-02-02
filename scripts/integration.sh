@@ -38,17 +38,17 @@ meshlab ${SFM_DIR}/model_outlier_removal.ply
 # ----------------------------------------------------------------------
 
 # Step 2: Reconstruction
-meshlab.meshlabserver -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx
+meshlab.meshlabserver -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx
 
 # ----------------------------------------------------------------------
 
 # Step 3: Use the new model for texturization
-${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model.mvs --mesh-file mesh_file.ply --smooth 0
+${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model.mvs --mesh-file mesh_file.ply --smooth 0 --working-folder ${SFM_DIR}
 
 # ----------------------------------------------------------------------
 
 # Step 4: Mesh texturing for computing a sharp and accurate texture to color the mesh
-${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231
+${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231 --working-folder ${SFM_DIR}
 
 # ----------------------------------------------------------------------
 

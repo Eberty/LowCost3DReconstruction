@@ -70,11 +70,17 @@ rm tmp.ply tmp.txt
 
 # Step 5: Fine alignment - TODO
 # For now use meshlab ICP: Please flatten layers and save as ${ARTEFACT_NAME}.ply
-LC_ALL=C meshlab 0.ply
+meshlab 0.ply
 
-# Top and bottom alignment - TODO
-# ${EXE_DIR}/pair_align -c top.ply -f ${ARTEFACT_NAME}.ply -s ${ARTEFACT_NAME}_top.ply --gui
-# ${EXE_DIR}/pair_align -c bottom.ply -f ${ARTEFACT_NAME}.ply -s ${ARTEFACT_NAME}_bottom.ply --gui
+# Top and bottom alignment
+
+# Coarse Alignment
+${EXE_DIR}/pair_align -i top.ply -t ${ARTEFACT_NAME}.ply -o top.ply --roll -90 --pitch 0 --yaw 90 --elevation 50
+${EXE_DIR}/pair_align -i bottom.ply -t ${ARTEFACT_NAME}.ply -o bottom.ply--roll 90 --pitch 0 --yaw 90 --elevation -50
+
+# Fine alignment - TODO
+# For now use meshlab ICP: Please flatten layers and save as ${ARTEFACT_NAME}.ply
+# meshlab ${ARTEFACT_NAME}.ply
  
 # ----------------------------------------------------------------------
 
@@ -86,4 +92,4 @@ meshlab.meshlabserver -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply -m vc vn -
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C meshlab ${ARTEFACT_NAME}.ply
+# meshlab ${ARTEFACT_NAME}.ply
