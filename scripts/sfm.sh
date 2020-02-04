@@ -35,10 +35,10 @@ COLMAP_BIN=colmap
 OPENMVS_DIR=/usr/local/bin/OpenMVS
 
 # Set directory where are the necessary executable for this pipeline
-EXE_DIR=/home/eberty/Dropbox/DocumentosMestrado/Codigos/msc-research/bin
+EXE_DIR=/usr/local/msc-research
 
 # Set directory with meshlab scripts
-MESHLAB_SCRIPTS_DIR=/home/eberty/Dropbox/DocumentosMestrado/Codigos/msc-research/scripts
+MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
 
 # Working directory (temporary folder)
 TEMP_DIR=${IMAGES_DIR}/temp

@@ -1,5 +1,6 @@
 alignment/fine_registration/build/*
 alignment/pair_align/build/*
+alignment/point_cloud_registration/build/*
 alignment/rotate_align/build/*
 
 capture/super_resolution/build/*
@@ -11,7 +12,3 @@ tools/scale/build/*
 tools/transform/build/*
 
 build/*
-
-bin/*
-bin_casa/*
-bin_trabalho/*

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Eberty Alves
+ * Copyright (c) 2020, Eberty Alves
  */
 
 // C++ standard library
