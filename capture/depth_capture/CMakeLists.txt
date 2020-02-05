@@ -29,3 +29,7 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${OpenMP_CXX_LIBRARIES} -fopenmp)
 target_link_libraries(${PROJECT_NAME} ${FREENECT_LIBRARIES} -lfreenect -lfreenect_sync)
+
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/msc-research
+)

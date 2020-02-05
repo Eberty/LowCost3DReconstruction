@@ -25,13 +25,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/outlier_removal/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/scale/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/transform/")
 
-# Install binaries and meshlab files
-install(
-  TARGETS fine_registration pair_align point_cloud_registration rotate_align super_resolution depth_capture cloud_downsampling outlier_removal scale transform
-  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
-)
-
-install(
-  DIRECTORY meshlab/
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
+# Install meshlab files
+install(DIRECTORY meshlab/
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/msc-research
 )

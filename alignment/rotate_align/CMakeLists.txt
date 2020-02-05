@@ -13,3 +13,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_executable(${PROJECT_NAME} rotate_align.cpp)
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/msc-research
+)
