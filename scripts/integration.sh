@@ -24,6 +24,9 @@ SFM_DIR=${PWD}/images/temp
 # Set directory where are the necessary executable for this pipeline
 EXE_DIR=/usr/local/msc-research
 
+# Set meshlabserver command
+MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
 
@@ -33,13 +36,13 @@ MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
 
 # Open meshlab with result, open ${FILE_NAME}.ply, align using 4-point based for rigid transformation and run ICP for fine transformation
 # Fix matrix of tranformed mesh and save as ${FILE_NAME}_transformed.ply
-meshlab ${SFM_DIR}/model_outlier_removal.ply
+LC_ALL=C meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
 
 # ----------------------------------------------------------------------
 
 # Step 2: Reconstruction
 cp ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx ${PWD}
-meshlab.meshlabserver -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s mesh_reconstruction.mlx
+eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s mesh_reconstruction.mlx 2> /dev/null
 rm ${PWD}/mesh_reconstruction.mlx
 
 # ----------------------------------------------------------------------
@@ -59,7 +62,7 @@ cp ${SFM_DIR}/model_mesh_texture.png ${PWD}
 cp ${SFM_DIR}/model_mesh_texture.ply ${PWD}
 
 # Convert to OBJ
-meshlab.meshlabserver -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt
+eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
 mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
 sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
 

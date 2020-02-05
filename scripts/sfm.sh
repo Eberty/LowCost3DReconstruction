@@ -37,6 +37,9 @@ OPENMVS_DIR=/usr/local/bin/OpenMVS
 # Set directory where are the necessary executable for this pipeline
 EXE_DIR=/usr/local/msc-research
 
+# Set meshlabserver command
+MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
 
@@ -71,7 +74,7 @@ if [[ ${2} && "${2,,}" == "dense" ]]; then
     ${EXE_DIR}/outlier_removal --input ${TEMP_DIR}/model_dense.ply --output ${TEMP_DIR}/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 0.1
 
     cp ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx ${PWD}
-    meshlab.meshlabserver -i ${TEMP_DIR}/model_dense_outlier_removal.ply -o ${TEMP_DIR}/model_dense_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx
+    eval ${MESHLABSERVER} -i ${TEMP_DIR}/model_dense_outlier_removal.ply -o ${TEMP_DIR}/model_dense_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx 2> /dev/null
 	rm ${PWD}/normal_estimation_no_flip.mlx
 
     # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
@@ -91,10 +94,10 @@ rm ${TEMP_DIR}/*.log
 # Remove unnecessary points that no belong to object
 ${EXE_DIR}/outlier_removal --input ${TEMP_DIR}/model.ply --output ${TEMP_DIR}/model_outlier_removal.ply --neighbors 100 --dev_mult 0.1
 cp ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx ${PWD}
-meshlab.meshlabserver -i ${TEMP_DIR}/model_outlier_removal.ply -o ${TEMP_DIR}/model_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx
+eval ${MESHLABSERVER} -i ${TEMP_DIR}/model_outlier_removal.ply -o ${TEMP_DIR}/model_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx 2> /dev/null
 rm ${PWD}/normal_estimation_no_flip.mlx
 
 # ----------------------------------------------------------------------
 
 cd ${CUR_DIR}
-# LC_ALL=C meshlab ${TEMP_DIR}/model_outlier_removal.ply
+# LC_ALL=C meshlab ${TEMP_DIR}/model_outlier_removal.ply &> /dev/null
