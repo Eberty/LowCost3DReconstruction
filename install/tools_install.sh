@@ -25,4 +25,4 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3 /usr/lib/libglut.so.3
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3.9.0 /usr/lib/libglut.so.3.9.0
 
 sudo apt install snap
-sudo snap install meshlab
+sudo snap install meshlab meshlab-mardy

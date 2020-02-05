@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# You can just run:
+# In newer distributions you can just run:
 # sudo apt install -y colmap
 
 # Set current directory
@@ -35,28 +35,30 @@ sudo apt install -y \
 sudo apt install libcgal-qt5-dev
 
 # Install Ceres Solver:
-sudo apt install libatlas-base-dev libsuitesparse-dev
-git clone https://ceres-solver.googlesource.com/ceres-solver
+sudo apt install -y libatlas-base-dev libsuitesparse-dev
+git clone https://ceres-solver.googlesource.com/ceres-solver ceres-solver
 cd ceres-solver
 # git checkout $(git describe --tags) # Checkout the latest release
-mkdir build && cd build
+mkdir build
+cd build
 cmake .. -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
-make -j2 && sudo make install
+make -j$(nproc) && sudo make install
 
 cd $CUR_DIR
 
 # Configure and compile COLMAP:
-git clone https://github.com/colmap/colmap.git
+git clone https://github.com/colmap/colmap.git colmap
 cd colmap
 git checkout dev
-mkdir build && cd build
+mkdir build
+cd build
 cmake ..
 
 # Under newer Ubuntu versions it might be necessary to explicitly select the used GCC version due to compatiblity issues with CUDA, which can be done as:
 # sudo apt install gcc-6 g++-6
 # CC=/usr/bin/gcc-6 CXX=/usr/bin/g++-6 cmake ..
 
-make -j2 && sudo make install
+make -j$(nproc) && sudo make install
 
 # Run COLMAP:
 # colmap -h

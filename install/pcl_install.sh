@@ -2,7 +2,7 @@
 
 # Tools
 sudo apt update
-sudo apt -y install wget tar
+sudo apt install -y wget tar
 
 # Set current directory
 CUR_DIR=$PWD
@@ -14,7 +14,7 @@ mv pcl-pcl-1.9.1 pcl
 cd pcl
 
 # Install prerequisites
-sudo apt -y install g++ \
+sudo apt install -y g++ \
     cmake cmake-gui \
     doxygen \
     mpi-default-dev openmpi-bin openmpi-common \
@@ -34,8 +34,11 @@ sudo apt -y install g++ \
     libopenni-dev libopenni2-dev
 
 # Compile and install PCL
-mkdir build && cd build
+mkdir build
+cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_apps=ON -DBUILD_examples=ON -DBUILD_GPU=ON ..
-make -j2 && sudo make install
+make -j$(nproc) && sudo make install
 
 cd $CUR_DIR
+
+rm pcl-1.9.1.tar.gz
