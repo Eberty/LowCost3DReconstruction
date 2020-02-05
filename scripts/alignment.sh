@@ -26,6 +26,7 @@ EXE_DIR=/usr/local/msc-research
 
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
+cp ${MESHLAB_SCRIPTS_DIR}/*.mlx ${PWD}
 
 # ----------------------------------------------------------------------
 
@@ -52,11 +53,11 @@ ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --bottom --sr_size $
 
 # Step 2: Fix normals
 for i in $(seq 0 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
-	meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_"$(( 10#${i} * 10#${CAPTURE_STEP} ))".ply -o ${i}.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_estimation.mlx
+	meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_"$(( 10#${i} * 10#${CAPTURE_STEP} ))".ply -o ${i}.ply -m vc vn -s normal_estimation.mlx
 done
 
-meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_top.ply -o top.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_estimation.mlx
-meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_bottom.ply -o bottom.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_estimation.mlx
+meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_top.ply -o top.ply -m vc vn -s normal_estimation.mlx
+meshlab.meshlabserver -i ${ARTEFACT_NAME}_srmesh_bottom.ply -o bottom.ply -m vc vn -s normal_estimation.mlx
 
 # ----------------------------------------------------------------------
 
@@ -80,11 +81,11 @@ meshlab 0.ply
 
 # Coarse Alignment
 ${EXE_DIR}/pair_align -i top.ply -t ${ARTEFACT_NAME}.ply -o top.ply --roll -90 --pitch 0 --yaw 90 --elevation 50
-${EXE_DIR}/pair_align -i bottom.ply -t ${ARTEFACT_NAME}.ply -o bottom.ply--roll 90 --pitch 0 --yaw 90 --elevation -50
+${EXE_DIR}/pair_align -i bottom.ply -t ${ARTEFACT_NAME}.ply -o bottom.ply --roll 90 --pitch 0 --yaw 90 --elevation -50
 
 # Fine alignment - TODO
 # For now use meshlab ICP: Please flatten layers and save as ${ARTEFACT_NAME}.ply
-# meshlab ${ARTEFACT_NAME}.ply
+meshlab ${ARTEFACT_NAME}.ply
  
 # ----------------------------------------------------------------------
 
@@ -92,8 +93,10 @@ ${EXE_DIR}/pair_align -i bottom.ply -t ${ARTEFACT_NAME}.ply -o bottom.ply--roll 
 cp ${ARTEFACT_NAME}.ply ${ARTEFACT_NAME}_backup.ply
 ${EXE_DIR}/outlier_removal --input ${ARTEFACT_NAME}.ply --output ${ARTEFACT_NAME}.ply --neighbors 50 --dev_mult 1.0
 ${EXE_DIR}/scale --input ${ARTEFACT_NAME}.ply --output ${ARTEFACT_NAME}.ply --scale 0.01
-meshlab.meshlabserver -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_normalize.mlx
+meshlab.meshlabserver -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply -m vc vn -s normal_normalize.mlx
 
 # ----------------------------------------------------------------------
+
+rm ${PWD}/*.mlx
 
 # meshlab ${ARTEFACT_NAME}.ply

@@ -38,7 +38,9 @@ meshlab ${SFM_DIR}/model_outlier_removal.ply
 # ----------------------------------------------------------------------
 
 # Step 2: Reconstruction
-meshlab.meshlabserver -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx
+cp ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx ${PWD}
+meshlab.meshlabserver -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s mesh_reconstruction.mlx
+rm ${PWD}/mesh_reconstruction.mlx
 
 # ----------------------------------------------------------------------
 

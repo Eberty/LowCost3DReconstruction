@@ -40,6 +40,8 @@ EXE_DIR=/usr/local/msc-research
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
 
+# ----------------------------------------------------------------------
+
 # Working directory (temporary folder)
 TEMP_DIR=${IMAGES_DIR}/temp
 mkdir ${TEMP_DIR}
@@ -67,7 +69,10 @@ ${OPENMVS_DIR}/InterfaceVisualSFM ${TEMP_DIR}/model.nvm
 if [[ ${2} && "${2,,}" == "dense" ]]; then
     ${OPENMVS_DIR}/DensifyPointCloud ${TEMP_DIR}/model.mvs
     ${EXE_DIR}/outlier_removal --input ${TEMP_DIR}/model_dense.ply --output ${TEMP_DIR}/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 0.1
-    meshlab.meshlabserver -i ${TEMP_DIR}/model_dense_outlier_removal.ply -o ${TEMP_DIR}/model_dense_outlier_removal.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx
+
+    cp ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx ${PWD}
+    meshlab.meshlabserver -i ${TEMP_DIR}/model_dense_outlier_removal.ply -o ${TEMP_DIR}/model_dense_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx
+	rm ${PWD}/normal_estimation_no_flip.mlx
 
     # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
     # ${OPENMVS_DIR}/ReconstructMesh ${TEMP_DIR}/model_dense.mvs --remove-spurious 50
@@ -85,7 +90,9 @@ rm ${TEMP_DIR}/*.log
 
 # Remove unnecessary points that no belong to object
 ${EXE_DIR}/outlier_removal --input ${TEMP_DIR}/model.ply --output ${TEMP_DIR}/model_outlier_removal.ply --neighbors 100 --dev_mult 0.1
-meshlab.meshlabserver -i ${TEMP_DIR}/model_outlier_removal.ply -o ${TEMP_DIR}/model_outlier_removal.ply -m vc vn -s ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx
+cp ${MESHLAB_SCRIPTS_DIR}/normal_estimation_no_flip.mlx ${PWD}
+meshlab.meshlabserver -i ${TEMP_DIR}/model_outlier_removal.ply -o ${TEMP_DIR}/model_outlier_removal.ply -m vc vn -s normal_estimation_no_flip.mlx
+rm ${PWD}/normal_estimation_no_flip.mlx
 
 # ----------------------------------------------------------------------
 
