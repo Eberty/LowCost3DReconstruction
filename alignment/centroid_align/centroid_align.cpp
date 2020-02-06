@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Rotation tool to orient the views with regard to one reference point cloud." << std::endl << std::endl;
+      std::cout << "Rotation tool to translate one point cloud with regard to one reference point cloud." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
@@ -118,12 +118,12 @@ int main(int argc, char* argv[]) {
     transform = Eigen::Affine3f::Identity();
     transform.translation() << tgt_centroid[0], tgt_centroid[1], tgt_centroid[2];
     pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
- 
+
     // Translate src point cloud in Y axis
     transform = Eigen::Affine3f::Identity();
     transform.translation() << 0, elevation, 0;
     pcl::transformPointCloudWithNormals(*cloud_src, *cloud_src, transform);
-    
+
     pcl::io::savePLYFileBinary(output_file_name, *cloud_src);
 
     if (b_accumulated_file) {
