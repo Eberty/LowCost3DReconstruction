@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
     ("radius,r", po::value<double>(&radius)->required(), "Standard radius to remove")
-    ("negative,n", po::value<bool>(&negative)->default_value(false), "Saves the removed points in a .ply file");
+    ("negative,n", "Saves the removed points in a .ply file");
 
     // Use a parser to evaluate the command line
     po::variables_map vm;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     } else {
       throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -r [radius]");
     }
-	negative = vm["negative"].as<bool>();
+	negative = vm.count("negative");
 
     PointC::Ptr point_cloud(new PointC);
     PointC::Ptr cloud_filtered(new PointC);
