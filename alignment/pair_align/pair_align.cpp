@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
+      std::cout << "Rotation tool to orient the views with regard to one reference point cloud." << std::endl << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
