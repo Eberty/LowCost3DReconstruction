@@ -6,6 +6,7 @@ capture/super_resolution/build/*
 capture/depth_capture/build/*
 
 tools/cloud_downsampling/build/*
+tools/crop_cloud/build/*
 tools/outlier_removal/build/*
 tools/scale/build/*
 tools/transform/build/*
