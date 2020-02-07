@@ -21,6 +21,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture/")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/cloud_downsampling/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/crop_cloud/")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/normal_estimation/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/outlier_removal/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/scale/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/transform/")
