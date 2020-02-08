@@ -18,6 +18,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/rotate_align/")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture/")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture_kv2/")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/cloud_downsampling/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/crop_cloud/")

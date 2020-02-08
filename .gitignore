@@ -4,6 +4,7 @@ alignment/rotate_align/build/*
 
 capture/super_resolution/build/*
 capture/depth_capture/build/*
+capture/depth_capture_kv2/build/*
 
 tools/cloud_downsampling/build/*
 tools/crop_cloud/build/*
