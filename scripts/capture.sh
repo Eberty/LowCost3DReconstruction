@@ -6,8 +6,8 @@
 
 # Verify if the argument is a valid name
 if [[ ! ${1} ]]; then
-	echo "Please inform a valid name as argument."
-	return;
+    echo "Please inform a valid name as argument."
+    return;
 fi
 
 # ----------------------------------------------------------------------

@@ -10,6 +10,7 @@ CUR_DIR=$PWD
 # Clone latest PCL
 wget https://github.com/PointCloudLibrary/pcl/archive/pcl-1.9.1.tar.gz
 tar -vzxf pcl-1.9.1.tar.gz
+rm pcl-1.9.1.tar.gz
 mv pcl-pcl-1.9.1 pcl
 cd pcl
 
@@ -41,4 +42,3 @@ make -j$(nproc) && sudo make install
 
 cd $CUR_DIR
 
-rm pcl-1.9.1.tar.gz
