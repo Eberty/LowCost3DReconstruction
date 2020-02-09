@@ -2,9 +2,6 @@
  * Copyright (c) 2018-2019, Eberty Alves, Pedro Raimundo
  */
 
-// OpenMP
-#include <omp.h>
-
 // C++ standard library
 #include <bits/stdc++.h>
 
@@ -412,17 +409,10 @@ int main(int argc, char **argv) {
         unsigned char *data;
         uint16_t *depth_data;
 
-#pragma omp parallel num_threads(2)
-        {
-          int thread_num = omp_get_thread_num();
-          if (thread_num == 0) {
-            freenect_sync_get_video((void **)(&data), &timestamp, 0, FREENECT_VIDEO_RGB);
-            show_rgb(data);
-          } else if (thread_num == 1) {
-            freenect_sync_get_depth((void **)(&depth_data), &timestamp_depth, 0, FREENECT_DEPTH_REGISTERED);
-            show_depth(depth_data);
-          }
-        }
+        freenect_sync_get_video((void **)(&data), &timestamp, 0, FREENECT_VIDEO_RGB);
+        show_rgb(data);
+        freenect_sync_get_depth((void **)(&depth_data), &timestamp_depth, 0, FREENECT_DEPTH_REGISTERED);
+        show_depth(depth_data);
       } else {
         if (key == CLOSE) {
           break;
