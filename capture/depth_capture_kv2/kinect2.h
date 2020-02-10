@@ -67,7 +67,7 @@ class Kinect2 {
  public:
   enum Processor { CPU, OPENCL, OPENGL };
 
-  explicit Kinect2(Processor p, bool mirror = 1)
+  explicit Kinect2(Processor p, bool mirror = true)
       : mirror_(mirror),
         listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth),
         undistorted_(512, 424, 4),
@@ -79,8 +79,7 @@ class Kinect2 {
      libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Warning));
 
     if (freenect2_.enumerateDevices() == 0) {
-      std::cout << "No kinect2 connected!" << std::endl;
-      exit(-1);
+      throw "No kinect2 connected!";
     }
 
     serial_ = freenect2_.getDefaultDeviceSerialNumber();
@@ -106,9 +105,17 @@ class Kinect2 {
     }
 
     dev_ = freenect2_.openDevice(serial_, pipeline_);
+
+    if (dev_ == NULL) {
+      throw "Failure opening device!";
+    }
+
     dev_->setColorFrameListener(&listener_);
     dev_->setIrAndDepthFrameListener(&listener_);
-    dev_->start();
+
+    if (!dev_->start()) {
+      throw "Error on start device!";
+    }
 
     registration_ = new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams());
 
@@ -168,9 +175,9 @@ class Kinect2 {
         if (!std::isnan(depth_value) && !(std::abs(depth_value) < 0.0001)) {
           const float rx = colmap(x) * depth_value;
           const float ry = dy * depth_value;
-          itP->z = depth_value;
+          itP->z = -depth_value;
           itP->x = rx;
-          itP->y = ry;
+          itP->y = -ry;
 
           itP->b = itRGB[0];
           itP->g = itRGB[1];
