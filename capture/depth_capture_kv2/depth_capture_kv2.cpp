@@ -18,13 +18,10 @@
 #include <boost/program_options.hpp>
 
 // Point cloud library
-#include <pcl/io/ply_io.h>
+#include <pcl/features/normal_3d.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/filter.h>
-
-// Point cloud viewer
-// #include <pcl/visualization/cloud_viewer.h>
-// typedef pcl::visualization::PointCloudColorHandlerRGBField<PointT> PointCloudColorHandler;
+#include <pcl/io/ply_io.h>
 
 // Escape closes the application
 #define CLOSE 27
@@ -176,10 +173,9 @@ cv::Mat clean_image(cv::Mat input_image, int near, int far, int left, int right,
 // ---------------------------------------------------------
 
 int save_depth(const cv::Mat &depth) {
-  cv::Mat depth_mat = cv::Mat(depth);
   std::ostringstream oss;
   oss << capture_name << "_depth_" << view_type_str(count_depth * capture_step) << ".png";
-  depth_mat = clean_image(depth_mat, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
+  cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
   cvtColor(depth_mat, depth_mat, cv::COLOR_RGBA2RGB);
   imwrite(oss.str(), depth_mat);
   printf("%s saved!\n", oss.str().c_str());
@@ -195,10 +191,9 @@ int save_depth(const cv::Mat &depth) {
 // ---------------------------------------------------------
 
 int save_depth_burst(const cv::Mat &depth, const unsigned int frame_count) {
-  cv::Mat depth_mat = cv::Mat(depth);
   std::ostringstream oss;
   oss << capture_name << "_burst_" << view_type_str(count_burst * capture_step) << "_" << frame_count << ".png";
-  depth_mat = clean_image(depth_mat, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
+  cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
   cvtColor(depth_mat, depth_mat, cv::COLOR_RGBA2RGB);
   imwrite(oss.str(), depth_mat);
   printf("%s saved!\n", oss.str().c_str());
@@ -213,10 +208,9 @@ int save_depth_burst(const cv::Mat &depth, const unsigned int frame_count) {
 // ---------------------------------------------------------
 
 int save_rgb(const cv::Mat &rgb) {
-  cv::Mat img_rgb_mat = cv::Mat(rgb);
   std::ostringstream oss;
   oss << capture_name << "_color_" << view_type_str(count_color * capture_step) << ".png";
-  imwrite(oss.str(), img_rgb_mat);
+  imwrite(oss.str(), rgb);
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
   return 1;
@@ -258,7 +252,19 @@ int save_ply(const PointC::Ptr cloud, int count, Kinect2 &kinect) {
   extract.setNegative(false);
   extract.filter(*output_cloud);
 
-  pcl::io::savePLYFileBinary(oss.str().c_str(), *output_cloud);
+  typedef pcl::PointCloud<pcl::Normal> PointN;
+  pcl::NormalEstimation<PointT, pcl::Normal> ne;
+  ne.setInputCloud(output_cloud);
+  pcl::search::KdTree<PointT>::Ptr tree(new pcl::search::KdTree<PointT>());
+  ne.setSearchMethod(tree);
+  PointN::Ptr normals(new PointN);
+  ne.setKSearch(50);
+  ne.setViewPoint(0, 0, 0);
+  ne.compute(*normals);
+
+  pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_normals(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+  pcl::concatenateFields(*output_cloud, *normals, *cloud_normals);
+  pcl::io::savePLYFileBinary(oss.str().c_str(), *cloud_normals);
 
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
@@ -356,24 +362,12 @@ int main(int argc, char *argv[]) {
     cv::createTrackbar("Top Plane (px)\t", "DEPTH", &top_plane, kinect_size.height - 1, NULL);
     cv::createTrackbar("Bottom Plane (px)", "DEPTH", &bottom_plane, kinect_size.height - 1, NULL);
 
-    PointC::Ptr cloud;
     Kinect2 kinect(freenectprocessor);
-
-    cloud = kinect.getCloud();
-    // PointCloudColorHandler color_hander(cloud);
-    // pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-    // viewer->addPointCloud<pcl::PointXYZRGB>(cloud, color_hander, "cloud");
-    // viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud");
-    // viewer->setBackgroundColor(0, 0, 0);
+    PointC::Ptr cloud = kinect.getCloud();
 
     // Loop to get captures
     int key = 0;
     while ((key = cv::waitKey(1))) {
-      // viewer->spinOnce();
-      // cloud = kinect.updateCloud(cloud);
-      // PointCloudColorHandler color_hander(cloud);
-      // viewer->updatePointCloud<pcl::PointXYZRGB>(cloud, color_hander, "cloud");
-
       // Opencv apparently cant decide whether 'no key' is -1 or 255.
       if (key == 255 || key == -1) {
         show_rgb(kinect.getColor());
