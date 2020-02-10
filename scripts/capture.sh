@@ -10,6 +10,12 @@ if [[ ! ${1} ]]; then
     return;
 fi
 
+# Set depth capture method
+if [[ ! ${2} || ! ( ${2} == "1" || ${2} == "2" ) ]]; then
+    echo "Please inform a valid kinect version (1 or 2)."
+    return;
+fi
+
 # ----------------------------------------------------------------------
 
 # Set directory where are the necessary executable for this pipeline
@@ -29,7 +35,11 @@ SR_SIZE=16
 # ----------------------------------------------------------------------
 
 # Step 1: Capture
-${EXE_DIR}/depth_capture --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
+if [[ ${2} == "1" ]]; then
+    ${EXE_DIR}/depth_capture --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
+else
+    ${EXE_DIR}/depth_capture_kv2 --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
+fi
 
 # Set number of captures
 NUM_OF_CAPTURES=${?}

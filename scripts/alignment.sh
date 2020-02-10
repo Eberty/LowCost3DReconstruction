@@ -16,6 +16,15 @@ if [[ ! ${2} || ! ${2} =~ ^[+-]?[0-9]+$ ]]; then
     return;
 fi
 
+# Set SR method
+SR=""
+if [[ ${3} && "${3,,}" == "sr" ]]; then
+    SR="sr"
+    echo "Using SR mesh"
+else
+    echo "Using mesh"
+fi
+
 # ----------------------------------------------------------------------
 
 # Set Super4PCS command
@@ -48,19 +57,21 @@ SR_SIZE=16
 # ----------------------------------------------------------------------
 
 # Step 1: Super resolution
-${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --num_captures ${NUM_OF_CAPTURES} --sr_size ${SR_SIZE}
-${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --top --sr_size ${SR_SIZE}
-${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --bottom --sr_size ${SR_SIZE}
+if [[ ${SR} == "sr" ]]; then
+    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --num_captures ${NUM_OF_CAPTURES} --sr_size ${SR_SIZE}
+    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --top --sr_size ${SR_SIZE}
+    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --bottom --sr_size ${SR_SIZE}
+fi
 
 # ----------------------------------------------------------------------
 
 # Step 2: Fix normals
 for i in $(seq 0 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
-    eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_srmesh_"$(( 10#${i} * 10#${CAPTURE_STEP} ))".ply -o ${i}.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
+    eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_${SR}mesh_"$(( 10#${i} * 10#${CAPTURE_STEP} ))".ply -o ${i}.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
 done
 
-eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_srmesh_top.ply -o top.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
-eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_srmesh_bottom.ply -o bottom.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_${SR}mesh_top.ply -o top.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}_${SR}mesh_bottom.ply -o bottom.ply -m vc vn -s normal_estimation.mlx 2> /dev/null
 
 # ----------------------------------------------------------------------
 
