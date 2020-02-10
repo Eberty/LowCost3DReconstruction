@@ -45,9 +45,11 @@ git clone https://github.com/OpenKinect/libfreenect2.git
 cd libfreenect2
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
+cmake ..
+make -j$(nproc) && sudo make install
 
-make -j$(nproc) && make install
+# cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
+# make -j$(nproc) && make install
 
 # You need to specify the CMake based third-party application to find libfreenect2:
 # cmake -Dfreenect2_DIR=$HOME/freenect2/lib/cmake/freenect:
