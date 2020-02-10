@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     reverse_normals = vm.count("reverse_normals");
     centroid = vm.count("centroid");
     origin = vm.count("origin");
-    
+
     if (origin && centroid) {
       throw std::string("It is not possible to use the centroid and origin as viewpoint at the same time");
     }

@@ -6,11 +6,11 @@
 #include <bits/stdc++.h>
 
 // Point cloud library
+#include <pcl/common/centroid.h>
+#include <pcl/filters/crop_box.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/common/centroid.h>
-#include <pcl/filters/crop_box.h>
 
 // Boost
 #include <boost/program_options.hpp>
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     } else {
       throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -r [radius]");
     }
-	negative = vm.count("negative");
+    negative = vm.count("negative");
 
     PointC::Ptr point_cloud(new PointC);
     PointC::Ptr cloud_filtered(new PointC);
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     if (pcl::io::loadPLYFile<PointT>(input_file_name, *point_cloud) == -1) {
       throw std::string("Couldn't load input file");
     }
- 
+
     std::cout << "Cloud before filtering: " << std::endl;
     std::cout << *point_cloud << std::endl;
 
@@ -75,25 +75,25 @@ int main(int argc, char* argv[]) {
     pcl::compute3DCentroid(*point_cloud, centroid);
 
     // Create the filtering object
-	pcl::CropBox<PointT> crop_box;
-	crop_box.setMin(Eigen::Vector4f(centroid[0] - radius, centroid[1] - radius, centroid[2] - radius, 1.0));
-	crop_box.setMax(Eigen::Vector4f(centroid[0] + radius, centroid[1] + radius, centroid[2] + radius, 1.0));
-	crop_box.setInputCloud(point_cloud);
-	crop_box.filter(*cloud_filtered);
-	
-	// Save ply with points croped
+    pcl::CropBox<PointT> crop_box;
+    crop_box.setMin(Eigen::Vector4f(centroid[0] - radius, centroid[1] - radius, centroid[2] - radius, 1.0));
+    crop_box.setMax(Eigen::Vector4f(centroid[0] + radius, centroid[1] + radius, centroid[2] + radius, 1.0));
+    crop_box.setInputCloud(point_cloud);
+    crop_box.filter(*cloud_filtered);
+
+    // Save ply with points croped
     std::cout << "Cloud after filtering: " << std::endl;
     std::cout << *cloud_filtered << std::endl;
     pcl::io::savePLYFileBinary(output_file_name, *cloud_filtered);
 
-	// Save points outside the crop box
-	if (negative) {
-		crop_box.setNegative(true);
-		crop_box.filter(*cloud_filtered);
-		size_t pos = output_file_name.rfind(".ply");
-		if (pos != std::string::npos) output_file_name.erase(pos, 4);
-		pcl::io::savePLYFileBinary(output_file_name + "_negative.ply", *cloud_filtered);
-	}
+    // Save points outside the crop box
+    if (negative) {
+      crop_box.setNegative(true);
+      crop_box.filter(*cloud_filtered);
+      size_t pos = output_file_name.rfind(".ply");
+      if (pos != std::string::npos) output_file_name.erase(pos, 4);
+      pcl::io::savePLYFileBinary(output_file_name + "_negative.ply", *cloud_filtered);
+    }
 
     return 0;
   } catch (boost::program_options::error& msg) {
