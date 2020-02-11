@@ -100,25 +100,23 @@ std::string view_type_str(int value) {
 // ---------------------------------------------------------
 
 void show_depth(const cv::Mat &depth) {
-  cv::Mat depth_mat_tmp = cv::Mat(depth);
-  const float *itD0 = reinterpret_cast<float *>(depth_mat_tmp.ptr());
-
-  for (int i = 0; i < depth_mat_tmp.size().height; i++) {
-    const unsigned int offset = i * depth_mat_tmp.size().width;
-    const float *itD = itD0 + offset;
-
-    for (int j = 0; j < depth_mat_tmp.size().width; j++, itD++) {
-      const float depth_in_mm = *itD;
+  cv::Mat depth_mat_tmp = cv::Mat(depth.size(), CV_8UC3);
+  int i, j;
+  for (i = 0; i < depth_mat_tmp.size().height; i++) {
+    for (j = 0; j < depth_mat_tmp.size().width; j++) {
+      float depth_in_mm = depth.at<float>(i, j);
       if (depth_in_mm != 0 && depth_in_mm >= depth_min && depth_in_mm <= depth_max && i >= top_plane &&
           i <= bottom_plane && j >= left_plane && j <= right_plane) {
-        uint16_t color = (uint16_t)lerp(255.0, 32.0, static_cast<double>(depth_in_mm) / 4500.0f);
-        for (int k = 0; k < 4; k++) {
-          *(depth_mat_tmp.ptr<uchar>(i) + 4 * j + k) = color;
-        }
+        uint16_t color = (uint16_t)lerp(32.0, 255.0, depth_in_mm / 4500.0f);
+        cv::Vec3b &pixel_color = depth_mat_tmp.at<cv::Vec3b>(i, j);
+        pixel_color[0] = color;
+        pixel_color[1] = color;
+        pixel_color[2] = color;
       } else {
-        for (int k = 0; k < 4; k++) {
-          *(depth_mat_tmp.ptr<uchar>(i) + 4 * j + k) = 0;
-        }
+        cv::Vec3b &pixel_color = depth_mat_tmp.at<cv::Vec3b>(i, j);
+        pixel_color[0] = 0;
+        pixel_color[1] = 0;
+        pixel_color[2] = 0;
       }
     }
   }
@@ -140,7 +138,7 @@ void show_rgb(const cv::Mat &rgb) {
 // ---------------------------------------------------------
 // Name: clean_image
 // ---------------------------------------------------------
-// Description: manually treshold a depth image, since
+// Description: manually treshold a CV_32FC1 image, since
 // the chances of opencv working for this are kind hit-or-miss
 // between versions and operating systems
 // ---------------------------------------------------------
@@ -148,18 +146,11 @@ void show_rgb(const cv::Mat &rgb) {
 cv::Mat clean_image(cv::Mat input_image, int near, int far, int left, int right, int top, int bottom) {
   cv::Mat output_image;
   input_image.copyTo(output_image);
-
-  const float *itD0 = reinterpret_cast<float *>(output_image.ptr());
   for (int i = 0; i < output_image.size().height; i++) {
-    const unsigned int offset = i * output_image.size().width;
-    const float *itD = itD0 + offset;
-
-    for (int j = 0; j < output_image.size().width; j++, itD++) {
-      const float pixel = *itD;
+    for (int j = 0; j < output_image.size().width; j++) {
+      float &pixel = output_image.at<float>(i, j);
       if (pixel > far || pixel < near || i < top || i > bottom || j < left || j > right) {
-        for (int k = 0; k < 4; k++) {
-          *(output_image.ptr<uchar>(i) + 4 * j + k) = 0;
-        }
+        pixel = 0;
       }
     }
   }
@@ -167,7 +158,7 @@ cv::Mat clean_image(cv::Mat input_image, int near, int far, int left, int right,
 }
 
 // ---------------------------------------------------------
-// Name: save_depth - TODO
+// Name: save_depth
 // ---------------------------------------------------------
 // Description: create a file and save one depth frame
 // ---------------------------------------------------------
@@ -176,15 +167,15 @@ int save_depth(const cv::Mat &depth) {
   std::ostringstream oss;
   oss << capture_name << "_depth_" << view_type_str(count_depth * capture_step) << ".png";
   cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
-  cvtColor(depth_mat, depth_mat, cv::COLOR_RGBA2RGB);
-  imwrite(oss.str(), depth_mat);
+  depth_mat /= 4500.0;
+  imwrite(oss.str(), cv::Mat(depth_mat.rows, depth_mat.cols, CV_8UC4, depth_mat.data));
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
   return 1;
 }
 
 // ---------------------------------------------------------
-// Name: save_depth_burst - TODO
+// Name: save_depth_burst
 // ---------------------------------------------------------
 // Description: create a file and save one depth frame from
 //              a burst sequence
@@ -194,8 +185,8 @@ int save_depth_burst(const cv::Mat &depth, const unsigned int frame_count) {
   std::ostringstream oss;
   oss << capture_name << "_burst_" << view_type_str(count_burst * capture_step) << "_" << frame_count << ".png";
   cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
-  cvtColor(depth_mat, depth_mat, cv::COLOR_RGBA2RGB);
-  imwrite(oss.str(), depth_mat);
+  depth_mat /= 4500.0;
+  imwrite(oss.str(), cv::Mat(depth_mat.rows, depth_mat.cols, CV_8UC4, depth_mat.data));
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
   return 1;
@@ -355,8 +346,8 @@ int main(int argc, char *argv[]) {
     kinect_size.height = 424;
 
     // Trackbar
-    cv::createTrackbar("Near Plane (mm)\t", "DEPTH", &depth_min, 4000, NULL);
-    cv::createTrackbar("Far Plane (mm)\t", "DEPTH", &depth_max, 4000, NULL);
+    cv::createTrackbar("Near Plane (mm)\t", "DEPTH", &depth_min, 4500, NULL);
+    cv::createTrackbar("Far Plane (mm)\t", "DEPTH", &depth_max, 4500, NULL);
     cv::createTrackbar("Left Plane (px)\t", "DEPTH", &left_plane, kinect_size.width - 1, NULL);
     cv::createTrackbar("Right Plane (px)\t", "DEPTH", &right_plane, kinect_size.width - 1, NULL);
     cv::createTrackbar("Top Plane (px)\t", "DEPTH", &top_plane, kinect_size.height - 1, NULL);
@@ -403,7 +394,6 @@ int main(int argc, char *argv[]) {
 
         if (key == BURST || key == ALL) {
           for (unsigned int i = 0; i < sr_size; i++) {
-            cloud = kinect.updateCloud(cloud);
             save_depth_burst(kinect.getDepth(), i);
           }
           if (type_of_view == FRONT) count_burst++;

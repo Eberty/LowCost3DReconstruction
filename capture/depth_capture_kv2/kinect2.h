@@ -76,13 +76,12 @@ class Kinect2 {
         qnan_(std::numeric_limits<float>::quiet_NaN()) {
     signal(SIGINT, sigint_handler);
 
-     libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Warning));
+    libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Warning));
 
     if (freenect2_.enumerateDevices() == 0) {
       throw "No kinect2 connected!";
     }
 
-    serial_ = freenect2_.getDefaultDeviceSerialNumber();
     switch (p) {
       case CPU:
         std::cout << "Creating CPU processor" << std::endl;
@@ -104,6 +103,7 @@ class Kinect2 {
         break;
     }
 
+    serial_ = freenect2_.getDefaultDeviceSerialNumber();
     dev_ = freenect2_.openDevice(serial_, pipeline_);
 
     if (dev_ == NULL) {
@@ -145,7 +145,7 @@ class Kinect2 {
     libfreenect2::Frame *rgb = frames_[libfreenect2::Frame::Color];
     libfreenect2::Frame *depth = frames_[libfreenect2::Frame::Depth];
 
-    registration_->apply(rgb, depth, &undistorted_, &registered_, true, &big_mat_);
+    registration_->apply(rgb, depth, &undistorted_, &registered_, true, &big_mat_, map_);
     const std::size_t w = undistorted_.width;
     const std::size_t h = undistorted_.height;
 
@@ -163,13 +163,13 @@ class Kinect2 {
     PointT *itP = &cloud->points[0];
     bool is_dense = true;
 
-    for (std::size_t y = 0; y < h; ++y) {
+    for (std::size_t y = 0; y < h; y++) {
       const unsigned int offset = y * w;
       const float *itD = itD0 + offset;
       const char *itRGB = itRGB0 + offset * 4;
       const float dy = rowmap(y);
 
-      for (std::size_t x = 0; x < w; ++x, ++itP, ++itD, itRGB += 4) {
+      for (std::size_t x = 0; x < w; x++, itP++, itD++, itRGB += 4) {
         const float depth_value = *itD / 1000.0f;
 
         if (!std::isnan(depth_value) && !(std::abs(depth_value) < 0.0001)) {
@@ -222,7 +222,7 @@ class Kinect2 {
   cv::Mat getDepth() {
     listener_.waitForNewFrame(frames_);
     libfreenect2::Frame *depth = frames_[libfreenect2::Frame::Depth];
-    cv::Mat tmp(depth->height, depth->width, CV_8UC4, depth->data);
+    cv::Mat tmp(depth->height, depth->width, CV_32FC1, depth->data);
     cv::Mat r;
     if (mirror_ == true) {
       cv::flip(tmp, r, 1);
@@ -234,19 +234,28 @@ class Kinect2 {
     return std::move(r);
   }
 
-  std::pair<cv::Mat, cv::Mat> getDepthRgb() {
+  std::pair<cv::Mat, cv::Mat> getDepthRgb(const bool full_hd = true, const bool remove_points = false) {
     listener_.waitForNewFrame(frames_);
     libfreenect2::Frame *depth = frames_[libfreenect2::Frame::Depth];
     libfreenect2::Frame *rgb = frames_[libfreenect2::Frame::Color];
-    registration_->apply(rgb, depth, &undistorted_, &registered_);
-    cv::Mat tmp_depth(undistorted_.height, undistorted_.width, CV_8UC4, undistorted_.data);
-    cv::Mat tmp_color(registered_.height, registered_.width, CV_8UC4, registered_.data);
+
+    registration_->apply(rgb, depth, &undistorted_, &registered_, remove_points, &big_mat_, map_);
+
+    cv::Mat tmp_depth(undistorted_.height, undistorted_.width, CV_32FC1, undistorted_.data);
+    cv::Mat tmp_color;
+    if (full_hd) {
+      tmp_color = cv::Mat(rgb->height, rgb->width, CV_8UC4, rgb->data);
+    } else {
+      tmp_color = cv::Mat(registered_.height, registered_.width, CV_8UC4, registered_.data);
+    }
+
     cv::Mat r = tmp_color.clone();
     cv::Mat d = tmp_depth.clone();
     if (mirror_ == true) {
       cv::flip(tmp_depth, d, 1);
       cv::flip(tmp_color, r, 1);
     }
+
     listener_.release(frames_);
     return std::move(std::pair<cv::Mat, cv::Mat>(r, d));
   }
@@ -276,7 +285,7 @@ class Kinect2 {
   Eigen::Matrix<float, 512, 1> colmap;
   Eigen::Matrix<float, 424, 1> rowmap;
   std::string serial_;
-  int map_[512 * 424];  // will be used in the next libfreenect2 update
+  int map_[512 * 424];
   float qnan_;
 };
 

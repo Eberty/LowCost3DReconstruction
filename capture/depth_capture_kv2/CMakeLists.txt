@@ -4,6 +4,8 @@ project(depth_capture_kv2)
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Wall)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
+
 option(ENABLE_OPENCL "Enable OpenCL support" ON)
 
 # Set cmake prefix path to enable cmake to find freenect2
