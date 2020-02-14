@@ -1,6 +1,5 @@
 alignment/fine_registration/build/*
 alignment/centroid_align/build/*
-alignment/rotate_align/build/*
 
 capture/super_resolution/build/*
 capture/depth_capture/build/*
