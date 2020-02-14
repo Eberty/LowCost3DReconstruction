@@ -250,7 +250,7 @@ int save_ply(const PointC::Ptr cloud, int count, Kinect2 &kinect) {
   ne.setSearchMethod(tree);
   PointN::Ptr normals(new PointN);
   ne.setKSearch(50);
-  ne.setViewPoint(0, 0, 0);
+  ne.useSensorOriginAsViewPoint();
   ne.compute(*normals);
 
   pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_normals(new pcl::PointCloud<pcl::PointXYZRGBNormal>);

@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
       pcl::compute3DCentroid(*cloud, centroid);
       ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
     } else if (origin) {
-      ne.setViewPoint(0, 0, 0);
+      ne.useSensorOriginAsViewPoint();
     }
 
     // Compute the normals
