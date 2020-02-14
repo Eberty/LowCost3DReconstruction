@@ -33,17 +33,17 @@
 // C++ standard library
 #include <signal.h>
 #include <cstdlib>
-#include <string>
 #include <iostream>
 #include <limits>
+#include <string>
 #include <utility>
 
 // Kinect 2
 #include <libfreenect2/frame_listener_impl.h>
+#include <libfreenect2/logger.h>
 #include <libfreenect2/packet_pipeline.h>
 #include <libfreenect2/registration.h>
 #include <libfreenect2/libfreenect2.hpp>
-#include <libfreenect2/logger.h>
 
 // Point cloud library
 #include <pcl/point_cloud.h>
@@ -207,31 +207,24 @@ class Kinect2 {
   cv::Mat getColor() {
     listener_.waitForNewFrame(frames_);
     libfreenect2::Frame *rgb = frames_[libfreenect2::Frame::Color];
-    cv::Mat tmp(rgb->height, rgb->width, CV_8UC4, rgb->data);
-    cv::Mat r;
+    cv::Mat mat(rgb->height, rgb->width, CV_8UC4, rgb->data);
     if (mirror_ == true) {
-      cv::flip(tmp, r, 1);
-    } else {
-      r = tmp.clone();
+      cv::flip(mat, mat, 1);
     }
-
     listener_.release(frames_);
-    return std::move(r);
+    return mat;
   }
 
   cv::Mat getDepth() {
     listener_.waitForNewFrame(frames_);
     libfreenect2::Frame *depth = frames_[libfreenect2::Frame::Depth];
-    cv::Mat tmp(depth->height, depth->width, CV_32FC1, depth->data);
-    cv::Mat r;
+    cv::Mat mat(depth->height, depth->width, CV_32FC1, depth->data);
     if (mirror_ == true) {
-      cv::flip(tmp, r, 1);
-    } else {
-      r = tmp.clone();
+      cv::flip(mat, mat, 1);
     }
 
     listener_.release(frames_);
-    return std::move(r);
+    return mat;
   }
 
   std::pair<cv::Mat, cv::Mat> getDepthRgb(const bool full_hd = true, const bool remove_points = false) {
@@ -241,23 +234,21 @@ class Kinect2 {
 
     registration_->apply(rgb, depth, &undistorted_, &registered_, remove_points, &big_mat_, map_);
 
-    cv::Mat tmp_depth(undistorted_.height, undistorted_.width, CV_32FC1, undistorted_.data);
-    cv::Mat tmp_color;
+    cv::Mat mat_depth(undistorted_.height, undistorted_.width, CV_32FC1, undistorted_.data);
+    cv::Mat mat_color;
     if (full_hd) {
-      tmp_color = cv::Mat(rgb->height, rgb->width, CV_8UC4, rgb->data);
+      mat_color = cv::Mat(rgb->height, rgb->width, CV_8UC4, rgb->data);
     } else {
-      tmp_color = cv::Mat(registered_.height, registered_.width, CV_8UC4, registered_.data);
+      mat_color = cv::Mat(registered_.height, registered_.width, CV_8UC4, registered_.data);
     }
 
-    cv::Mat r = tmp_color.clone();
-    cv::Mat d = tmp_depth.clone();
     if (mirror_ == true) {
-      cv::flip(tmp_depth, d, 1);
-      cv::flip(tmp_color, r, 1);
+      cv::flip(mat_depth, mat_depth, 1);
+      cv::flip(mat_color, mat_color, 1);
     }
 
     listener_.release(frames_);
-    return std::move(std::pair<cv::Mat, cv::Mat>(r, d));
+    return std::pair<cv::Mat, cv::Mat>(mat_depth, mat_color);
   }
 
  private:
