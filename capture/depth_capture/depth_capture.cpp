@@ -57,7 +57,7 @@ int top_plane;
 int bottom_plane;
 
 // OpenCV variables
-static cv::Size kinect;
+static cv::Size kinect_size;
 
 // ---------------------------------------------------------
 // Name: lerp
@@ -94,11 +94,11 @@ std::string view_type_str(int value) {
 // ---------------------------------------------------------
 
 void show_depth(uint16_t *depth) {
-  cv::Mat depth_mat = cv::Mat(kinect, CV_16UC1, depth);
-  cv::Mat depth_mat_tmp = cv::Mat(kinect, CV_8UC3);
+  cv::Mat depth_mat = cv::Mat(kinect_size, CV_16UC1, depth);
+  cv::Mat depth_mat_tmp = cv::Mat(kinect_size, CV_8UC3);
   int i, j;
-  for (i = 0; i < kinect.height; i++) {
-    for (j = 0; j < kinect.width; j++) {
+  for (i = 0; i < kinect_size.height; i++) {
+    for (j = 0; j < kinect_size.width; j++) {
       uint16_t depth_in_mm = depth_mat.at<uint16_t>(i, j);
       if (depth_in_mm != 0 && depth_in_mm >= depth_min && depth_in_mm <= depth_max && i >= top_plane &&
           i <= bottom_plane && j >= left_plane && j <= right_plane) {
@@ -126,7 +126,7 @@ void show_depth(uint16_t *depth) {
 
 void show_rgb(uchar *rgb) {
   cv::Mat img_bgr_mat;
-  cv::Mat img_rgb_mat = cv::Mat(kinect, CV_8UC3, rgb);
+  cv::Mat img_rgb_mat = cv::Mat(kinect_size, CV_8UC3, rgb);
   cvtColor(img_rgb_mat, img_bgr_mat, cv::COLOR_RGB2BGR);
   imshow("RGB", img_bgr_mat);
 }
@@ -160,7 +160,7 @@ cv::Mat clean_image(cv::Mat input_image, int near, int far, int left, int right,
 // ---------------------------------------------------------
 
 int save_depth(uint16_t *depth) {
-  cv::Mat depth_mat = cv::Mat(kinect, CV_16UC1, depth);
+  cv::Mat depth_mat = cv::Mat(kinect_size, CV_16UC1, depth);
   std::ostringstream oss;
   oss << capture_name << "_depth_" << view_type_str(count_depth * capture_step) << ".png";
   depth_mat = clean_image(depth_mat, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
@@ -178,7 +178,7 @@ int save_depth(uint16_t *depth) {
 // ---------------------------------------------------------
 
 int save_depth_burst(uint16_t *depth, unsigned int frame_count) {
-  cv::Mat depth_mat = cv::Mat(kinect, CV_16UC1, depth);
+  cv::Mat depth_mat = cv::Mat(kinect_size, CV_16UC1, depth);
   std::ostringstream oss;
   oss << capture_name << "_burst_" << view_type_str(count_burst * capture_step) << "_" << frame_count << ".png";
   depth_mat = clean_image(depth_mat, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
@@ -195,7 +195,7 @@ int save_depth_burst(uint16_t *depth, unsigned int frame_count) {
 // ---------------------------------------------------------
 
 int save_rgb(uchar *rgb) {
-  cv::Mat img_rgb_mat = cv::Mat(kinect, CV_8UC3, rgb);
+  cv::Mat img_rgb_mat = cv::Mat(kinect_size, CV_8UC3, rgb);
   cv::Mat img_bgr_mat;
   std::ostringstream oss;
   oss << capture_name << "_color_" << view_type_str(count_color * capture_step) << ".png";
@@ -383,17 +383,17 @@ int main(int argc, char **argv) {
     cv::namedWindow("RGB", cv::WINDOW_AUTOSIZE);
     cv::namedWindow("DEPTH", cv::WINDOW_AUTOSIZE);
 
-    // Set kinect settings
-    kinect.width = 640;
-    kinect.height = 480;
+    // Set kinect_size settings
+    kinect_size.width = 640;
+    kinect_size.height = 480;
 
     // Trackbar
     cv::createTrackbar("Near Plane (mm)\t", "DEPTH", &depth_min, 4000, NULL);
     cv::createTrackbar("Far Plane (mm)\t", "DEPTH", &depth_max, 4000, NULL);
-    cv::createTrackbar("Left Plane (px)\t", "DEPTH", &left_plane, kinect.width - 1, NULL);
-    cv::createTrackbar("Right Plane (px)\t", "DEPTH", &right_plane, kinect.width - 1, NULL);
-    cv::createTrackbar("Top Plane (px)\t", "DEPTH", &top_plane, kinect.height - 1, NULL);
-    cv::createTrackbar("Bottom Plane (px)", "DEPTH", &bottom_plane, kinect.height - 1, NULL);
+    cv::createTrackbar("Left Plane (px)\t", "DEPTH", &left_plane, kinect_size.width - 1, NULL);
+    cv::createTrackbar("Right Plane (px)\t", "DEPTH", &right_plane, kinect_size.width - 1, NULL);
+    cv::createTrackbar("Top Plane (px)\t", "DEPTH", &top_plane, kinect_size.height - 1, NULL);
+    cv::createTrackbar("Bottom Plane (px)", "DEPTH", &bottom_plane, kinect_size.height - 1, NULL);
 
     int key = 0;
     if (freenect_sync_set_tilt_degs(0, 0)) {  // Returns nonzero on error
@@ -470,7 +470,7 @@ int main(int argc, char **argv) {
           uint32_t timestamp_color;
           unsigned char *color_data;
           freenect_sync_get_video((void **)(&color_data), &timestamp_color, 0, FREENECT_VIDEO_RGB);
-          save_ply(cv::Mat(kinect, CV_16UC1, depth_data), cv::Mat(kinect, CV_8UC3, color_data), count_depth_mesh);
+          save_ply(cv::Mat(kinect_size, CV_16UC1, depth_data), cv::Mat(kinect_size, CV_8UC3, color_data), count_depth_mesh);
           if (type_of_view == FRONT) count_depth_mesh++;
         }
       }
