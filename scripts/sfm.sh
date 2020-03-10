@@ -86,7 +86,7 @@ if [[ ${GPU} ]]; then
     ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.7
     ${EXE_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 10.0
     ${EXE_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
-    ${EXE_DIR}/normal_estimation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --centroid
+    ${EXE_DIR}/normal_estimation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 75 --centroid
 
     cp ${MESHLAB_SCRIPTS_DIR}/normal_normalize.mlx ${PWD}
     eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn -s normal_normalize.mlx 2> /dev/null
