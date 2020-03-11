@@ -22,14 +22,6 @@ float mean(std::vector<float> &v) {
   return mean;
 }
 
-// From https://stackoverflow.com/questions/1719070/1719155#1719155
-// Test median fusion instead of average
-float median(std::vector<float> &v) {
-  size_t n = v.size() / 2;
-  std::nth_element(v.begin(), v.begin() + n, v.end());
-  return v[n];
-}
-
 int save_ply(cv::Mat depth_mat, std::string filename, float min_value = std::numeric_limits<float>::min(),
              float max_value = std::numeric_limits<float>::max()) {
   FILE *fp;
@@ -298,8 +290,10 @@ int main(int argc, char **argv) {
               candidate_pixels.push_back(depth);
             }
           }
-          float &pix = hr_image.at<float>(i, j);
-          pix = mean(candidate_pixels);
+          if (candidate_pixels.size() > 0) {
+            float &pix = hr_image.at<float>(i, j);
+            pix = mean(candidate_pixels);
+          }
         }
       }
 
