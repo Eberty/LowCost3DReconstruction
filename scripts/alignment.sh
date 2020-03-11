@@ -18,8 +18,21 @@ fi
 
 # Set SR method
 SR=""
+KINECT_VERSION=""
+
 if [[ ${3} && "${3,,}" == "sr" ]]; then
     SR="sr"
+
+    # Set depth capture method
+    if [[ ! ${4} || ! ( ${4} == "1" || ${4} == "2" ) ]]; then
+        echo "Please inform a valid kinect version (1 or 2) indicating the origin of depth images."
+        return;
+    fi
+
+    if [[ ${4} == "2" ]]; then
+        KINECT_VERSION="_kv2"
+    fi
+
     echo "Using SR mesh"
 else
     echo "Using mesh"
@@ -58,9 +71,9 @@ SR_SIZE=16
 
 # Step 1: Super resolution
 if [[ ${SR} == "sr" ]]; then
-    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --num_captures ${NUM_OF_CAPTURES} --sr_size ${SR_SIZE}
-    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --top --sr_size ${SR_SIZE}
-    ${EXE_DIR}/super_resolution --capture_name ${ARTEFACT_NAME} --bottom --sr_size ${SR_SIZE}
+    ${EXE_DIR}/super_resolution${KINECT_VERSION} --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --num_captures ${NUM_OF_CAPTURES} --sr_size ${SR_SIZE}
+    ${EXE_DIR}/super_resolution${KINECT_VERSION} --capture_name ${ARTEFACT_NAME} --top --sr_size ${SR_SIZE}
+    ${EXE_DIR}/super_resolution${KINECT_VERSION} --capture_name ${ARTEFACT_NAME} --bottom --sr_size ${SR_SIZE}
 fi
 
 # ----------------------------------------------------------------------

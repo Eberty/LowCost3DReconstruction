@@ -32,14 +32,16 @@ CAPTURE_STEP=1
 # Set sr size
 SR_SIZE=16
 
+# Capture method
+KINECT_VERSION=""
+if [[ ${2} == "2" ]]; then
+    KINECT_VERSION="_kv2"
+fi
+
 # ----------------------------------------------------------------------
 
 # Step 1: Capture
-if [[ ${2} == "1" ]]; then
-    ${EXE_DIR}/depth_capture --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
-else
-    ${EXE_DIR}/depth_capture_kv2 --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
-fi
+${EXE_DIR}/depth_capture${KINECT_VERSION} --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
 
 # Set number of captures
 NUM_OF_CAPTURES=${?}
