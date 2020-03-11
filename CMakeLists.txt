@@ -12,19 +12,11 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # Add targets
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/fine_registration/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/alignment/centroid_align/")
-
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture_kv2/")
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/cloud_downsampling/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/crop_cloud/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/normal_estimation/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/outlier_removal/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/scale/")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tools/transform/")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pcl_tools/")
 
 # Install meshlab files
 install(DIRECTORY meshlab/

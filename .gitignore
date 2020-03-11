@@ -1,15 +1,7 @@
-alignment/fine_registration/build/*
-alignment/centroid_align/build/*
-
 capture/super_resolution/build/*
 capture/depth_capture/build/*
 capture/depth_capture_kv2/build/*
 
-tools/cloud_downsampling/build/*
-tools/crop_cloud/build/*
-tools/normal_estimation/build/*
-tools/outlier_removal/build/*
-tools/scale/build/*
-tools/transform/build/*
+pcl_tools/build/*
 
 build/*
