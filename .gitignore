@@ -1,6 +1,7 @@
-capture/super_resolution/build/*
 capture/depth_capture/build/*
 capture/depth_capture_kv2/build/*
+capture/super_resolution/build/*
+capture/super_resolution_kv2/build/*
 
 pcl_tools/build/*
 

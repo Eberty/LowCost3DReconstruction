@@ -12,9 +12,10 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # Add targets
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture/")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/depth_capture_kv2/")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution/")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/capture/super_resolution_kv2/")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pcl_tools/")
 
