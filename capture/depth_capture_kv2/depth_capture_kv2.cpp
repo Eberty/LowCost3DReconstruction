@@ -23,6 +23,9 @@
 #include <pcl/filters/filter.h>
 #include <pcl/io/ply_io.h>
 
+// Maximum value that a float pixel will take on in the buffer
+#define KINECT2_DEPTH_MM_MAX_VALUE 4500.0
+
 // Escape closes the application
 #define CLOSE 27
 
@@ -107,7 +110,7 @@ void show_depth(const cv::Mat &depth) {
       float depth_in_mm = depth.at<float>(i, j);
       if (depth_in_mm != 0 && depth_in_mm >= depth_min && depth_in_mm <= depth_max && i >= top_plane &&
           i <= bottom_plane && j >= left_plane && j <= right_plane) {
-        uint16_t color = (uint16_t)lerp(32.0, 255.0, depth_in_mm / 4500.0f);
+        uint16_t color = (uint16_t)lerp(32.0, 255.0, depth_in_mm / KINECT2_DEPTH_MM_MAX_VALUE);
         cv::Vec3b &pixel_color = depth_mat_tmp.at<cv::Vec3b>(i, j);
         pixel_color[0] = color;
         pixel_color[1] = color;
@@ -167,7 +170,7 @@ int save_depth(const cv::Mat &depth) {
   std::ostringstream oss;
   oss << capture_name << "_depth_" << view_type_str(count_depth * capture_step) << ".png";
   cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
-  depth_mat /= 4500.0;
+  depth_mat /= KINECT2_DEPTH_MM_MAX_VALUE;
   imwrite(oss.str(), cv::Mat(depth_mat.rows, depth_mat.cols, CV_8UC4, depth_mat.data));
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
@@ -185,7 +188,7 @@ int save_depth_burst(const cv::Mat &depth, const unsigned int frame_count) {
   std::ostringstream oss;
   oss << capture_name << "_burst_" << view_type_str(count_burst * capture_step) << "_" << frame_count << ".png";
   cv::Mat depth_mat = clean_image(depth, depth_min, depth_max, left_plane, right_plane, top_plane, bottom_plane);
-  depth_mat /= 4500.0;
+  depth_mat /= KINECT2_DEPTH_MM_MAX_VALUE;
   imwrite(oss.str(), cv::Mat(depth_mat.rows, depth_mat.cols, CV_8UC4, depth_mat.data));
   printf("%s saved!\n", oss.str().c_str());
   fflush(stdout);
