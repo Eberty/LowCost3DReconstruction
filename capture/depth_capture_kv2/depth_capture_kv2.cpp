@@ -18,6 +18,7 @@
 #include <boost/program_options.hpp>
 
 // Point cloud library
+#include <pcl/common/transforms.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/filter.h>
@@ -245,6 +246,11 @@ int save_ply(const PointC::Ptr cloud, int count, Kinect2 &kinect) {
   extract.setIndices(inliers);
   extract.setNegative(false);
   extract.filter(*output_cloud);
+
+  double scale = 1000.0 / KINECT2_DEPTH_MM_MAX_VALUE;
+  Eigen::Affine3f transform = Eigen::Affine3f::Identity();
+  transform(0, 0) = transform(1, 1) = transform(2, 2) = scale;
+  pcl::transformPointCloud(*output_cloud, *output_cloud, transform);
 
   typedef pcl::PointCloud<pcl::Normal> PointN;
   pcl::NormalEstimation<PointT, pcl::Normal> ne;
