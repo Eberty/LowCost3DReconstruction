@@ -23,6 +23,13 @@ fi
 GPU=true
 if [[ ${1} && ( "${1,,}" == "false" || "${1,,}" == "cpu" ) ]]; then
     GPU=false
+else
+    if [[ ${1} && ( "${1,,}" == "true" || "${1,,}" == "gpu" ) ]]; then
+        GPU=true
+    else
+        echo "Please inform gpu usage (true or false)."
+        return;
+    fi
 fi
 echo "Using GPU: ${GPU}"
 
@@ -81,7 +88,7 @@ rm ${PWD}/normal_normalize.mlx
 # ----------------------------------------------------------------------
 
 # Run MVS densify point-cloud for obtaining a complete and accurate as possible point-cloud
-if [[ ${GPU} ]]; then
+if [[ ${2} && "${2,,}" == "dense" ]]; then
     ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model.mvs
     ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.7
     ${EXE_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 10.0
