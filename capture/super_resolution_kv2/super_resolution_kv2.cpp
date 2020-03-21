@@ -62,7 +62,7 @@ int save_ply(cv::Mat depth_mat, std::string filename, float min_value = std::num
       double dzdy = (down - up) / 2.0;
 
       cv::Vec3d d(-dzdx, -dzdy, 1.0);
-      cv::Vec3d n = cv::normalize(d);
+      cv::Vec3d n = normalize(d);
 
       normal_mat.at<cv::Vec3f>(i, j) = n;
     }
@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
       for (size_t i = 0; i < sr_size; i++) {
         std::ostringstream oss_in;
         oss_in << capture_name << "_burst_" << view_name << "_" << i << ".png";
-        cv::Mat depth = cv::imread(oss_in.str(), cv::IMREAD_UNCHANGED);
+        cv::Mat depth = imread(oss_in.str(), cv::IMREAD_UNCHANGED);
         if (depth.empty()) {
           std::cout << "Image can not be read: " << oss_in.str() << std::endl;
           return -1;
@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
         double local_min, local_max;
         cv::Mat mask = lr_images[i] > 0;
 
-        cv::minMaxLoc(lr_images[i], &local_min, &local_max, NULL, NULL, mask);
+        minMaxLoc(lr_images[i], &local_min, &local_max, NULL, NULL, mask);
 
         global_min = local_min < global_min ? local_min : global_min;
         global_max = local_max > global_max ? local_max : global_max;
@@ -247,8 +247,8 @@ int main(int argc, char **argv) {
 #pragma omp parallel for
       for (size_t i = 0; i < sr_size; i++) {
         cv::Mat template_image = lr_images[0];  // first LR image
-        cv::findTransformECC(template_image, lr_images[i], alignment_matrices[i], cv::MOTION_AFFINE,
-                             cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 200, 1E-12));
+        findTransformECC(template_image, lr_images[i], alignment_matrices[i], cv::MOTION_AFFINE,
+                         cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 200, 1E-12));
         std::cout << "View(" << view_name << ") Alignment " << i << "-> 0 = " << alignment_matrices[i] << std::endl;
       }
 
@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
         // translation and rotation between the LR images as possible while still
         // modifying the intrinsics enough to have complementary data
         if (i > 0) {
-          cv::warpAffine(lr_images[i], lr_images[i], alignment_matrices[i], lr_images[i].size(), cv::WARP_INVERSE_MAP);
+          warpAffine(lr_images[i], lr_images[i], alignment_matrices[i], lr_images[i].size(), cv::WARP_INVERSE_MAP);
         }
 
         // Upsample - can use pyramids or perform a simple scale operation
@@ -281,7 +281,7 @@ int main(int argc, char **argv) {
       // adversely affected the results
       /*hr_image = cv::Mat(lr_images_upsampled[0].size(),CV_32FC1);
       for(size_t i = 0; i < sr_size; i++) {
-        cv::addWeighted(hr_image, 1.0, lr_images_upsampled[i], (1.0 / sr_size), 0, hr_image);
+        addWeighted(hr_image, 1.0, lr_images_upsampled[i], (1.0 / sr_size), 0, hr_image);
       }*/
 
       // New approach -- zero-elimination (ZE) averaging
@@ -308,7 +308,7 @@ int main(int argc, char **argv) {
       cv::resize(hr_image, hr_image, hr_image.size() / resample_factor, 0, 0, cv::INTER_LANCZOS4);
       std::ostringstream oss_out;
       oss_out << capture_name << "_srdepth_" << view_name << ".png";
-      cv::imwrite(oss_out.str(), cv::Mat(hr_image.rows, hr_image.cols, CV_8UC4, hr_image.data));
+      imwrite(oss_out.str(), cv::Mat(hr_image.rows, hr_image.cols, CV_8UC4, hr_image.data));
       oss_out.str(std::string());
       oss_out << capture_name << "_srmesh_" << view_name << ".ply";
       save_ply(hr_image, oss_out.str(), global_min, global_max);
