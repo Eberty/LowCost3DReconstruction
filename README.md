@@ -2,9 +2,9 @@
 
 ## **Overview**
 
-This project focus on low cost methodologies for 3D reconstruction of objects. We use state-of-the-art libraries and the main elements that a 3D reconstruction pipeline should include, from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.
+This project focus on low cost methodologies for 3D objects reconstruction. It uses state-of-the-art libraries and the main elements that a 3D reconstruction pipeline should include: from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.
 
-It was developed a pipeline composed of a hybrid 3D reconstruction approach, combining the low resolution images of the Kinect sensor depth camera with the high resolution images of an external RGB camera, obtain three-dimensional models with considerable visual quality.
+A pipeline composed of a hybrid 3D reconstruction approach was developed, combining the low resolution images of the Kinect sensor depth camera with the high resolution images of an external RGB camera, obtaining a three-dimensional models with considerable visual quality.
 
 **Abstract keywords:** Low Cost 3D Reconstruction, Depth Sensor, Photogrammetry.<br />
 **Keywords:** C++, Structure from Motion (SFM), Point Cloud Library (PCL), Kinect, Bash Scripts.
@@ -13,7 +13,7 @@ It was developed a pipeline composed of a hybrid 3D reconstruction approach, com
 
 ### **License**
 
-The source code is released under a [MIT](https://github.com/Eberty/msc-research/blob/master/LICENSE) license.
+The source code is released under the [MIT](https://github.com/Eberty/msc-research/blob/master/LICENSE) license.
 
 **Author:** Eberty Alves da Silva<br />
 **Affiliation:** Universidade Federal da Bahia - UFBA<br />
@@ -37,14 +37,14 @@ Then install git:
 
 After installing git, you can clone this git repository: `git clone https://github.com/Eberty/msc-research.git`.
 
-Within the *install* folder, there are several bash files. They are responsible for installing all the packages necessary for the execution of this pipeline:
+Within the *install* folder, there are several bash files. They are responsible for installing all the dependencies necessary for the this pipeline execution:
 
 1. [tools_install.sh](https://github.com/Eberty/msc-research/blob/master/install/tools_install.sh)
     * To install packages that can be installed through the official ubuntu repositories
 2. [pcl_install.sh](https://github.com/Eberty/msc-research/blob/master/install/pcl_install.sh)
     * To install the Point Cloud Library (PCL)
 3. [libfreenect2_install.sh](https://github.com/Eberty/msc-research/blob/master/install/libfreenect2_install.sh)
-    * To install driver for Kinect v2
+    * To install the driver for Kinect v2
 4. [colmap_install.sh](https://github.com/Eberty/msc-research/blob/master/install/colmap_install.sh)
     * To install the Structure-from-Motion (SfM) package
 5. [openmvs_install.sh](https://github.com/Eberty/msc-research/blob/master/install/openmvs_install.sh)
@@ -54,7 +54,7 @@ Within the *install* folder, there are several bash files. They are responsible 
 
 Run `source <install_file.sh>` in your terminal to install each required dependency.
 
-To make your life even easier, we pack everything in one place and you can just run:
+To make your life even easier, we packed everything in one place and you can just run:
 
 ```sh
 source run_all_install.sh
@@ -62,12 +62,12 @@ source run_all_install.sh
 
 <br />
 
-**NOTE:** in particular, for CUDA, we did not create a bash to install it. To do this, you can follow some of these tutorials:
+**NOTE:** in particular, for CUDA, it was not created a bash to install it. To do this, you can follow some of these tutorials:
 
 * <https://www.pugetsystems.com/labs/hpc/How-to-install-CUDA-9-2-on-Ubuntu-18-04-1184/>
 * <https://askubuntu.com/questions/799184/how-can-i-install-cuda-on-ubuntu-16-04>
 
-If your PC has an NVIDIA graphics card, we recommend installing CUDA (right after running *tools_install.sh*).
+It's recommended to install CUDA after running *tools_install.sh* if your PC has a NVIDA graphics card.
 
 #### Building
 
@@ -125,8 +125,8 @@ The methodology described here was divided into four files developed in bash scr
 4. [integration.sh](https://github.com/Eberty/msc-research/blob/master/scripts/integration.sh)
     * The integration consists of two stages: a) alignment between the point cloud produced with the aid of Kinect with the point cloud resulting from the SFM pipeline; b) reconstruction of the object's surface and  texturing.
     * In our pipeline, the high resolution photos taken with a digital camera with the poses calculated using SFM, will be used to perform the texturing of the model.
-    * **Copy this script into the same workspace folder and execute: `source integration.sh <mesh_file.ply> [dense]`**
-    * `mesh_file.ply` is the file generated by alignment process, whose name is similar to **object_name.ply**.
+    * **Copy this script into the same workspace folder and execute: `source integration.sh <object_name.ply> [dense]`**
+    * `object_name.ply` is the file generated by alignment process.
     * Add `dense` option to use the dense point-cloud reconstruction obtained by SFM script.
 
 ---
@@ -137,7 +137,7 @@ The methodology described here was divided into four files developed in bash scr
 source capture.sh <object_name> <kinect_version=1|2>
 source alignment.sh <object_name> <num_of_captures> [sr <kinect_version=1|2>]
 source sfm.sh <use_gpu=true|false> [dense]
-source integration.sh <mesh_file.ply> [dense]
+source integration.sh <object_name.ply> [dense]
 ```
 
 * **Feel free to change sh files in order to get best results.**
