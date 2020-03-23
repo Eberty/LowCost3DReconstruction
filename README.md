@@ -6,26 +6,26 @@ This project focus on low cost methodologies for 3D objects reconstruction. It u
 
 A pipeline composed of a hybrid 3D reconstruction approach was developed, combining the low resolution images of the Kinect sensor depth camera with the high resolution images of an external RGB camera, obtaining a three-dimensional models with considerable visual quality.
 
-**Abstract keywords:** Low Cost 3D Reconstruction, Depth Sensor, Photogrammetry.<br />
+**Abstract keywords:** Low Cost 3D Reconstruction, Depth Sensor, Photogrammetry.\
 **Keywords:** C++, Structure from Motion (SFM), Point Cloud Library (PCL), Kinect, Bash Scripts.
 
-<br />
+&nbsp;
 
 ### **License**
 
 The source code is released under the [MIT](https://github.com/Eberty/msc-research/blob/master/LICENSE) license.
 
-**Author:** Eberty Alves da Silva<br />
-**Affiliation:** Universidade Federal da Bahia - UFBA<br />
+**Author:** Eberty Alves da Silva\
+**Affiliation:** Universidade Federal da Bahia - UFBA\
 **Maintainer:** Eberty Alves da Silva, <eberty.silva@hotmail.com>
 
 The msc-research package has been tested under *Ubuntu 16.04 LTS* and *Ubuntu 19.10*.
 
-<br />
+&nbsp;
 
 ## **Installation**
 
-#### Dependencies
+### **Dependencies**
 
 First, on your terminal, update the package manager indexes:
 
@@ -60,7 +60,7 @@ To make your life even easier, we packed everything in one place and you can jus
 source run_all_install.sh
 ```
 
-<br />
+&nbsp;
 
 **NOTE:** in particular, for CUDA, it was not created a bash to install it. To do this, you can follow some of these tutorials:
 
@@ -69,7 +69,7 @@ source run_all_install.sh
 
 It's recommended to install CUDA after running *tools_install.sh* if your PC has a NVIDA graphics card.
 
-#### Building
+### **Building**
 
 After all dependencies are installed, run the following commands:
 
@@ -85,18 +85,18 @@ make -j$(nproc) && sudo make install
 
 This project involves a low cost 3D reconstruction process that presents a variation of generic pipelines methodology suggested by previous works, aiming to improve the final quality of the model and the automation of the process.
 
-We developed hybrid methodology composed of: capturing images of depth and color; generation of point clouds from Kinect depth images; capture alignment and estimation of camera positions for high definition images; mesh generation; texturing with high quality photos resulting in the final 3D model of the object of interest.
+A hybrid methodology have been developed, which is composed of: capturing images of depth and color; generation of point clouds from Kinect depth images; capture alignment and estimation of camera positions for high definition images; mesh generation; texturing with high quality photos resulting in the final 3D model of the object of interest.
 
-The methodology described here was divided into four files developed in bash script, responsible for making calls to various image and point clouds manipulation programs, in order to generate a good 3D model. The execution files needed to achieve our goals are described here:
+The methodology described here is divided into four bash script files, responsible for making calls to various image and point clouds manipulation programs in order to generate a good 3D model.
 
 1. [capture.sh](https://github.com/Eberty/msc-research/blob/master/scripts/capture.sh)
-    * To obtain depth images, the Kinect sensor (version 1 or 2) can be used. Depth images should be recorded so that the next one gradually increases the previous one, until a complete cycle is performed on the object of interest. Top and bottom view images can be captured independently.
-    * The meshes produced by kinect version one and two will be the same names. They will differ only by the accuracy (type) of channels in the generated depth images.
-    * **Copy this script into one workspace folder and execute: `source capture.sh <object_name> <kinect_version=1|2>`**
-    * The name of the object of interest is the first argument of this script, the second argument indicates the version of kinect used to make depth captures.
-    * When the program is running, it is important to remember: The numbers **2** and **8** configures the captures for the bottom and top views respectively. The other numbers when pressed sets the normal capture method. Run `/usr/local/msc-research/depth_capture -h` to more information.
+    * To obtain depth images, the Kinect sensor (version 1 or 2) can be used. Depth images should be recorded so that the next one gradually increases the previous one until a complete cycle is performed on the object of interest. Top and bottom view images can be captured independently.
+    * The meshes produced by kinect version one or two will have the same names. They will differ only by the accuracy (type) of channels in the generated depth images.
+    * **Copy this script into a workspace folder and execute: `source capture.sh <object_name> <kinect_version=1|2>`**
+    * The name of the object of interest is the first argument of this script, the second one indicates the kinect version used to make depth captures.
+    * When the program is running, it is important to remember: The numbers **2** and **8** configures the captures from the bottom and top views respectively. The other numbers when selected sets the normal capture method. Run `/usr/local/msc-research/depth_capture -h` to have more information.
 
-    <br />
+    &nbsp;
 
     ```sh
         Image capture keys:
@@ -123,8 +123,8 @@ The methodology described here was divided into four files developed in bash scr
     * Use `dense` option to do a dense point cloud reconstruction in order to obtain a complete and accurate point cloud possible.
 
 4. [integration.sh](https://github.com/Eberty/msc-research/blob/master/scripts/integration.sh)
-    * The integration consists of two stages: a) alignment between the point cloud produced with the aid of Kinect with the point cloud resulting from the SFM pipeline; b) reconstruction of the object's surface and  texturing.
-    * In our pipeline, the high resolution photos taken with a digital camera with the poses calculated using SFM, will be used to perform the texturing of the model.
+    * The integration consists in two stages: a) alignment between the point cloud produced by Kinect and the point cloud resulted from the SFM pipeline; b) reconstruction of the object's surface and  texturing.
+    * In our pipeline, the high resolution photos taken with a digital camera with the poses calculated using SFM will be used to perform the texturing of the model.
     * **Copy this script into the same workspace folder and execute: `source integration.sh <object_name.ply> [dense]`**
     * `object_name.ply` is the file generated by alignment process.
     * Add `dense` option to use the dense point-cloud reconstruction obtained by SFM script.
