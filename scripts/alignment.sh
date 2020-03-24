@@ -124,7 +124,6 @@ LC_ALL=C meshlab ${ARTEFACT_NAME}.ply 2> /dev/null
 # ----------------------------------------------------------------------
 
 # Step 5: Scale kinect ply result file
-# ${EXE_DIR}/cloud_downsampling -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply --leaf_size 1.0
 ${EXE_DIR}/scale -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply --scale 0.015
 eval ${MESHLABSERVER} -i ${ARTEFACT_NAME}.ply -o ${ARTEFACT_NAME}.ply -m vc vn -s normal_normalize.mlx 2> /dev/null
 
