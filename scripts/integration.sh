@@ -74,6 +74,8 @@ ${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model.mvs --mesh-file mesh_file.ply --
 # Step 4: Mesh texturing for computing a sharp and accurate texture to color the mesh
 ${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231 --working-folder ${SFM_DIR}
 
+rm ${SFM_DIR}/*.log
+
 # ----------------------------------------------------------------------
 
 # Step 5: Copy result to current dir
@@ -81,9 +83,9 @@ cp ${SFM_DIR}/model_mesh_texture.png ${PWD}
 cp ${SFM_DIR}/model_mesh_texture.ply ${PWD}
 
 # Convert to OBJ
-# eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
-# mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
-# sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
+eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
+mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
+sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
 
 # ----------------------------------------------------------------------
 
