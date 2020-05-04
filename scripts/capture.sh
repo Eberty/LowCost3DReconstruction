@@ -23,8 +23,8 @@ EXE_DIR=/usr/local/msc-research
 
 # ----------------------------------------------------------------------
 
-# Set artefact name
-ARTEFACT_NAME=${1}
+# Set model name
+OBJECT_NAME=${1}
 
 # Set capture step
 CAPTURE_STEP=1
@@ -41,7 +41,7 @@ fi
 # ----------------------------------------------------------------------
 
 # Step 1: Capture
-${EXE_DIR}/depth_capture${KINECT_VERSION} --capture_name ${ARTEFACT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
+${EXE_DIR}/depth_capture${KINECT_VERSION} --capture_name ${OBJECT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
 
 # Set number of captures
 NUM_OF_CAPTURES=${?}
