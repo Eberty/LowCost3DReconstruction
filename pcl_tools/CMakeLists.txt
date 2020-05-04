@@ -38,5 +38,5 @@ target_link_libraries(transform ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 install(TARGETS
   centroid_align cloud_downsampling crop_cloud fine_registration
   normal_estimation outlier_removal scale transform
-  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/msc-research
+  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/LowCost3DReconstruction
 )

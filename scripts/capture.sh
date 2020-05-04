@@ -19,7 +19,7 @@ fi
 # ----------------------------------------------------------------------
 
 # Set directory where are the necessary executable for this pipeline
-EXE_DIR=/usr/local/msc-research
+EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # ----------------------------------------------------------------------
 

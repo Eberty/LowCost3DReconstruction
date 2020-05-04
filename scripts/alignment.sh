@@ -44,13 +44,13 @@ fi
 Super4PCS_BIN=/usr/local/bin/Super4PCS
 
 # Set directory where are the necessary executable for this pipeline
-EXE_DIR=/usr/local/msc-research
+EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # Set meshlabserver command
 MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
 
 # Set directory with meshlab scripts
-MESHLAB_SCRIPTS_DIR=/usr/local/msc-research
+MESHLAB_SCRIPTS_DIR=/usr/local/LowCost3DReconstruction
 cp ${MESHLAB_SCRIPTS_DIR}/*.mlx ${PWD}
 
 # ----------------------------------------------------------------------

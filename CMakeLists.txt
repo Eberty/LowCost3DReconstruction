@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(msc-research)
+project(LowCost3DReconstruction)
 
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Wall)
@@ -21,5 +21,5 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pcl_tools/")
 
 # Install meshlab files
 install(DIRECTORY meshlab/
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/msc-research
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/LowCost3DReconstruction
 )
