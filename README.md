@@ -1,5 +1,7 @@
 # 3D reconstruction pipeline from depth and color cameras
 
+**NOTE:** this repository is still in development. Any suggestion or improvement please contact us. Feel free to use it and collaborate.
+
 ## **Overview**
 
 This project focus on low cost methodologies for 3D objects reconstruction. It uses state-of-the-art libraries and the main elements that a 3D reconstruction pipeline should include: from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.

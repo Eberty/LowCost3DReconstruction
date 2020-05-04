@@ -101,7 +101,8 @@ done
 rm tmp.ply tmp.txt
 
 # Fine alignment - TODO
-# For now use meshlab: open all number.ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply
+echo "----- Fine alignment -----"
+echo "For now use meshlab: open all [number].ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
 LC_ALL=C meshlab 0.ply 2> /dev/null
 
 # Remove outliers
@@ -118,7 +119,8 @@ ${EXE_DIR}/centroid_align -i top.ply -t ${OBJECT_NAME}.ply -o top.ply --roll -90
 ${EXE_DIR}/centroid_align -i bottom.ply -t ${OBJECT_NAME}.ply -o bottom.ply --roll 90 --pitch 0 --yaw 90 --elevation -50
 
 # Fine alignment - TODO
-# For now use meshlab: open top.ply and bottom.ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply
+echo "----- Fine alignment -----"
+echo "For now use meshlab: open top.ply and bottom.ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
 LC_ALL=C meshlab ${OBJECT_NAME}.ply 2> /dev/null
  
 # ----------------------------------------------------------------------

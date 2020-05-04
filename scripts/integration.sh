@@ -52,8 +52,9 @@ eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o ${FILE_NAME}_transforme
 rm tmp.ply tmp.txt
 
 # Fine alignment - TODO
-# Open meshlab with result, open ${FILE_NAME}_transformed.ply, [align using 4-point based for rigid transformation], apply ICP align
-# Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply
+echo "----- Fine alignment -----"
+echo "Open meshlab with result, open ${FILE_NAME}_transformed.ply, align using 4-point based for rigid transformation, apply ICP align"
+echo "Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply"
 LC_ALL=C meshlab sfm_model.ply 2> /dev/null
 
 # ----------------------------------------------------------------------
