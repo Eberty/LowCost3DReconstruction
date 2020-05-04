@@ -32,7 +32,7 @@ sudo apt install -y \
     libcgal-dev
 
 # Under Ubuntu 16.04/18.04 the CMake configuration scripts of CGAL are broken and you must also install the CGAL Qt5 package:
-sudo apt install libcgal-qt5-dev
+sudo apt install libcgal-qt5-dev -y
 
 # Install Ceres Solver:
 sudo apt install -y libatlas-base-dev libsuitesparse-dev
