@@ -1,8 +1,15 @@
+# Capture
 capture/depth_capture/build/*
 capture/depth_capture_kv2/build/*
 capture/super_resolution/build/*
 capture/super_resolution_kv2/build/*
 
+# PCL
 pcl_tools/build/*
 
+# Interface
+bundle_merge/build/*
+
+# Others
 build/*
+*.code-workspace
