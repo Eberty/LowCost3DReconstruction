@@ -4,7 +4,7 @@
 
 # ----------------------------------------------------------------------
 
-# Verify if the argument is a valid file (Use it for now)
+# Verify if the argument is a valid file
 if [[ ! -f ${1} || ${1: -4} != ".ply" ]]; then
     echo "Please inform a valid mesh file as argument."
     return;
@@ -90,11 +90,5 @@ sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture
 
 # ----------------------------------------------------------------------
 
-# Step 6: Texturization of bottom view - TODO
-# See: https://github.com/Eberty/model_view
-# ${MODEL_VIEW_DIR}/model_view model_mesh_texture.obj meshlab_project.mlp
-
-# ----------------------------------------------------------------------
-
-# Step 7: Validate pipeline - Compare the result with a ground truth or something else
+# Step 6: Validate pipeline - Compare the result with a ground truth or something else
 # See: https://github.com/Yochengliu/awesome-point-cloud-analysis

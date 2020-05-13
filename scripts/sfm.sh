@@ -66,10 +66,6 @@ ${COLMAP_BIN} exhaustive_matcher --database_path ${SFM_DIR}/database.db --SiftMa
 mkdir ${SFM_DIR}/sparse
 ${COLMAP_BIN} mapper --database_path ${SFM_DIR}/database.db --image_path ${SFM_DIR} --output_path ${SFM_DIR}/sparse
 
-# Convert colmap project into TXT files
-# mkdir ${SFM_DIR}/txt
-# ${COLMAP_BIN} model_converter --input_path ${SFM_DIR}/sparse/0 --output_path ${SFM_DIR}/txt --output_type TXT
-
 # Convert colmap project into an OpenMVS project
 ${COLMAP_BIN} model_converter --input_path ${SFM_DIR}/sparse/0 --output_path ${SFM_DIR}/model.ply --output_type PLY
 ${COLMAP_BIN} model_converter --input_path ${SFM_DIR}/sparse/0 --output_path ${SFM_DIR}/model.nvm --output_type NVM
@@ -78,7 +74,7 @@ ${OPENMVS_DIR}/InterfaceVisualSFM ${SFM_DIR}/model.nvm
 # ----------------------------------------------------------------------
 
 # Remove unnecessary points that no belong to object
-${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model.ply -o ${SFM_DIR}/model_outlier_removal.ply --radius 2.0
+${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model.ply -o ${SFM_DIR}/model_outlier_removal.ply --radius 3.0
 ${EXE_DIR}/normal_estimation -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply --neighbors 50 --centroid
 
 cp ${MESHLAB_SCRIPTS_DIR}/normal_normalize.mlx ${PWD}
