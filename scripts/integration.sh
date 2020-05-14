@@ -4,6 +4,17 @@
 
 # ----------------------------------------------------------------------
 
+# Print help message
+for ARG in "${@:1}"; do
+    if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
+        echo "Usage: "
+        echo "      source ${BASH_SOURCE} <object_name.ply> [dense]"
+        return;
+    fi
+done
+
+# ----------------------------------------------------------------------
+
 # Verify if the argument is a valid file
 if [[ ! -f ${1} || ${1: -4} != ".ply" ]]; then
     echo "Please inform a valid mesh file as argument."

@@ -7,6 +7,17 @@
 
 # ----------------------------------------------------------------------
 
+# Print help message
+for ARG in "${@:1}"; do
+    if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
+        echo "Usage: "
+        echo "      source ${BASH_SOURCE} <use_gpu=true|false> [dense]"
+        return;
+    fi
+done
+
+# ----------------------------------------------------------------------
+
 # Set images directory
 CUR_DIR=${PWD}
 IMAGES_DIR=${CUR_DIR}/images

@@ -4,6 +4,17 @@
 
 # ----------------------------------------------------------------------
 
+# Print help message
+for ARG in "${@:1}"; do
+    if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
+        echo "Usage: "
+        echo "      source ${BASH_SOURCE} <object_name> <num_of_captures> [sr <kinect_version=1|2>]"
+        return;
+    fi
+done
+
+# ----------------------------------------------------------------------
+
 # Verify if the first argument is a valid name
 if [[ ! ${1}  || ! -f ${1}_mesh_0.ply ]]; then
     echo "Please inform a valid name as first argument."

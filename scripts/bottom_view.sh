@@ -4,6 +4,17 @@
 
 # ----------------------------------------------------------------------
 
+# Print help message
+for ARG in "${@:1}"; do
+    if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
+        echo "Usage: "
+        echo "      source ${BASH_SOURCE} <meshlab_bundler.out> <raster_image_files>"
+        return;
+    fi
+done
+
+# ----------------------------------------------------------------------
+
 # Set sfm directory
 CUR_DIR=${PWD}
 SFM_DIR=${CUR_DIR}/images/sfm
