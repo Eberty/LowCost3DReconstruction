@@ -16,7 +16,9 @@ bool bundlerTxt(const std::string& input_file_path, const std::string& output_fi
                 const std::vector<std::string>& images_file_name) {
   std::ifstream input_file(input_file_path);
   std::ofstream output_file(output_file_path);
+
   if (input_file.is_open() && output_file.is_open()) {
+    std::cout << "Saving: " << output_file_path << std::endl;
     std::string token;
 
     while (std::getline(input_file, token)) {
@@ -42,6 +44,8 @@ bool bundlerOut(const std::string& meshlab_file_path, const std::string& input_f
   if (!output_file.is_open()) {
     std::cout << "Unable to open file: " << output_file_path << std::endl;
     return false;
+  } else {
+    std::cout << "Saving: " << output_file_path << std::endl;
   }
 
   {
@@ -121,6 +125,17 @@ int compare(std::string s1, std::string s2) {
   return (s1.compare(s2) == 0);
 }
 
+void getFileNameAndPath(const std::string& str, std::string& file_name, std::string& path) {
+  size_t pos = 0;
+  if ((pos = str.find_last_of("/")) != std::string::npos) {
+    path = str.substr(0, pos + 1);
+    file_name = str.substr(pos + 1, str.length());
+  } else {
+    path = "";
+    file_name = str;
+  }
+}
+
 int main(int argc, char* argv[]) {
   try {
     // Declaration of variables
@@ -175,9 +190,11 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<Cameras> new_cameras;
-    std::string output_file_path =
-        output_prefix + "." + bundle_file_name.substr(0, bundle_file_name.find_last_of(".")) + ".out";
-    if (!bundlerOut(meshlab_bundle, bundle_file_name, output_file_path, new_cameras)) {
+    std::string file_name, path;
+
+    getFileNameAndPath(bundle_file_name, file_name, path);
+    std::string output_bundler_path = path + output_prefix + "." + file_name;
+    if (!bundlerOut(meshlab_bundle, bundle_file_name, output_bundler_path, new_cameras)) {
       throw std::string("Error while writing bundler *.out file");
     }
 
@@ -185,8 +202,9 @@ int main(int argc, char* argv[]) {
       throw std::string("Image list must have the same number of cameras of " + meshlab_bundle);
     }
 
-    output_file_path = output_prefix + "." + list_file_name.substr(0, list_file_name.find_last_of(".")) + ".txt";
-    if (!bundlerTxt(list_file_name, output_file_path, images)) {
+    getFileNameAndPath(list_file_name, file_name, path);
+    std::string output_list_path = path + output_prefix + "." + file_name;
+    if (!bundlerTxt(list_file_name, output_list_path, images)) {
       throw std::string("Error while writing bundler *.txt file");
     }
 

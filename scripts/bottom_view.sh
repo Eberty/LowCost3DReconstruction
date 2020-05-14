@@ -86,12 +86,10 @@ do
   COUNTER=$[$COUNTER +1]
 done < "${SFM_DIR}/bundle-list.txt"
 
-${OPENMVS_DIR}/InterfaceVisualSFM ${SFM_DIR}/bundler.out
-
 # ----------------------------------------------------------------------
 
 # Merge bundle files
-${EXE_DIR}/bundle_merge -i ${@:2} -m ${FILE_NAME} -b bundle.out -l bundle-list.txt -p merged
+${EXE_DIR}/bundle_merge -i ${@:2} -m ${SFM_DIR}/${FILE_NAME} -b ${SFM_DIR}/bundle.out -l ${SFM_DIR}/bundle-list.txt -p merged
 rm ${SFM_DIR}/bundle.out
 rm ${SFM_DIR}/bundle-list.txt
 
