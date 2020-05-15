@@ -177,7 +177,7 @@ To produce a file with the new cameras (raster) for this post-apply is recommend
 After, you can produce the auxiliary file with the configuration of the new cameras in the following way:
 
 1. Open meshlab: `snap run meshlab 2> /dev/null`
-2. Select **File** > **Import mesh** > "Choose a mesh file"
+2. Select **File** > **Import mesh** > "Choose the **model_mesh_texture.ply** file"
 3. Select **File** > **Import Raster...** > "Choose a image file"
 4. Select **Show Current Raster Mode** on menu
     * Press **Ctrl + H** to start from a initial point of view
