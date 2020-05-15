@@ -24,7 +24,7 @@ IMAGES_DIR=${CUR_DIR}/images
 
 # Verify directory existence
 if [[ ! -d ${IMAGES_DIR} || ! "$(ls -A ${IMAGES_DIR})" ]]; then
-    echo "Directory ${CUR_DIR}/images not found or empty."
+    echo "Directory ${IMAGES_DIR} not found or empty."
     return;
 fi
 
@@ -121,4 +121,6 @@ rm ${SFM_DIR}/*.log
 # ----------------------------------------------------------------------
 
 cd ${CUR_DIR}
-# LC_ALL=C meshlab ${SFM_DIR}/model_outlier_removal.ply &> /dev/null
+
+# LC_ALL=C meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
+# LC_ALL=C meshlab ${SFM_DIR}/model_dense_outlier_removal.ply 2> /dev/null

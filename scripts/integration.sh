@@ -95,11 +95,10 @@ cp ${SFM_DIR}/model_mesh_texture.png ${PWD}
 cp ${SFM_DIR}/model_mesh_texture.ply ${PWD}
 
 # Convert to OBJ
-eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
-mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
-sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
+# eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
+# mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
+# sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
 
 # ----------------------------------------------------------------------
 
-# Step 6: Validate pipeline - Compare the result with a ground truth or something else
-# See: https://github.com/Yochengliu/awesome-point-cloud-analysis
+# LC_ALL=C meshlab model_mesh_texture.ply 2> /dev/null

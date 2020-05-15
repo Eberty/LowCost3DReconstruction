@@ -82,8 +82,8 @@ mv ${SFM_DIR}/bundler.list.txt ${SFM_DIR}/bundle-list.txt
 COUNTER=0
 while IFS= read -r line
 do
-  sed -i "$[$COUNTER +1]s|.*|${SFM_DIR}/undistorted_images/$(printf '%05d' $COUNTER).png|" ${SFM_DIR}/bundle-list.txt
-  COUNTER=$[$COUNTER +1]
+    sed -i "$[$COUNTER +1]s|.*|${SFM_DIR}/undistorted_images/$(printf '%05d' $COUNTER).png|" ${SFM_DIR}/bundle-list.txt
+    COUNTER=$[$COUNTER +1]
 done < "${SFM_DIR}/bundle-list.txt"
 
 # ----------------------------------------------------------------------
@@ -109,16 +109,16 @@ rm ${SFM_DIR}/*.log
 # ----------------------------------------------------------------------
 
 # Copy result to current dir
-cp ${SFM_DIR}/final_mesh_texture.png ${CUR_DIR}/final_mesh_texture.png
-cp ${SFM_DIR}/final_mesh_texture.ply ${CUR_DIR}/final_mesh_texture.ply
+cp ${SFM_DIR}/final_mesh_texture.png ${CUR_DIR}
+cp ${SFM_DIR}/final_mesh_texture.ply ${CUR_DIR}
 
 cd ${CUR_DIR}
 
 # Convert to OBJ
-eval ${MESHLABSERVER} -i final_mesh_texture.ply -o final_mesh_texture.obj -m vn wt 2> /dev/null
-mv final_mesh_texture.obj.mtl final_mesh_texture.mtl
-sed -i 's/final_mesh_texture.obj.mtl/final_mesh_texture.mtl/' final_mesh_texture.obj
+# eval ${MESHLABSERVER} -i final_mesh_texture.ply -o final_mesh_texture.obj -m vn wt 2> /dev/null
+# mv final_mesh_texture.obj.mtl final_mesh_texture.mtl
+# sed -i 's/final_mesh_texture.obj.mtl/final_mesh_texture.mtl/' final_mesh_texture.obj
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C meshlab ${SFM_DIR}/final_mesh_texture.ply &> /dev/null
+# LC_ALL=C meshlab final_mesh_texture.ply 2> /dev/null

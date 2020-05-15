@@ -114,7 +114,7 @@ rm tmp.ply tmp.txt
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "For now use meshlab: open all [number].ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
-LC_ALL=C meshlab 0.ply 2> /dev/null
+LC_ALL=C meshlab 2> /dev/null
 
 # Remove outliers
 cp ${OBJECT_NAME}.ply ${OBJECT_NAME}_backup.ply
@@ -144,4 +144,4 @@ eval ${MESHLABSERVER} -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}.ply -m vc vn -s no
 
 rm ${PWD}/*.mlx
 
-# LC_ALL=C meshlab ${OBJECT_NAME}.ply &> /dev/null
+# LC_ALL=C meshlab ${OBJECT_NAME}.ply 2> /dev/null
