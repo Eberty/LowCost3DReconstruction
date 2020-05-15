@@ -19,6 +19,8 @@ typedef pcl::PointCloud<PointT> PointC;
 typedef pcl::PointCloud<pcl::Normal> PointN;
 
 int main(int argc, char* argv[]) {
+  pcl::console::setVerbosityLevel(pcl::console::L_ERROR);
+
   try {
     // Declaration of variables
     std::string input_file_name;
