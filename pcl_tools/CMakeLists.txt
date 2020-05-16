@@ -5,11 +5,14 @@ set(CMAKE_CXX_STANDARD 14)
 add_definitions(-Wall)
 
 find_package(PCL REQUIRED)
-find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(Boost COMPONENTS program_options timer REQUIRED)
 
 include_directories(${PCL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
+
+add_executable(accumulate_clouds accumulate_clouds.cpp)
+target_link_libraries(accumulate_clouds ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(centroid_align centroid_align.cpp)
 target_link_libraries(centroid_align ${PCL_LIBRARIES} ${Boost_LIBRARIES})
@@ -36,7 +39,7 @@ add_executable(transform transform.cpp)
 target_link_libraries(transform ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS
-  centroid_align cloud_downsampling crop_cloud fine_registration
-  normal_estimation outlier_removal scale transform
+  accumulate_clouds centroid_align cloud_downsampling crop_cloud
+  fine_registration normal_estimation outlier_removal scale transform
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/LowCost3DReconstruction
 )
