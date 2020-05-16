@@ -21,6 +21,8 @@ typedef pcl::PointXYZRGBNormal PointT;
 typedef pcl::PointCloud<PointT> PointC;
 
 int main(int argc, char* argv[]) {
+  pcl::console::setVerbosityLevel(pcl::console::L_ERROR);
+
   try {
     // Declaration of variables
     std::string src_file_name;
