@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
     ne.setInputCloud(cloud);
 
     // Create an empty kdtree representation, and pass it to the normal estimation object.
-    // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+    // Its content will be filled inside the object, based on the given input dataset.
     pcl::search::KdTree<PointT>::Ptr tree(new pcl::search::KdTree<PointT>());
     ne.setSearchMethod(tree);
 
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     ne.compute(*normals);
 
     // The setViewPoint function will flip the normals of the whole point cloud.
-    // NOTE: Once use the centroid of the set of points as view point, we need to invert the normals to outside the object.
+    // Once use the centroid of the set of points as view point, we need to invert the normals to outside the object.
     if ((centroid && !reverse_normals) || (!centroid && reverse_normals)) {
       for (size_t i = 0; i < normals->size(); i++) {
         normals->points[i].normal_x *= -1;

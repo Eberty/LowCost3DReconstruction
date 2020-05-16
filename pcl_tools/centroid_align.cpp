@@ -6,12 +6,11 @@
 #include <bits/stdc++.h>
 
 // Point cloud library
+#include <pcl/common/centroid.h>
+#include <pcl/common/transforms.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-
-#include <pcl/common/transforms.h>
-#include <pcl/common/centroid.h>
 
 // Boost library
 #include <boost/program_options.hpp>
@@ -47,7 +46,7 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&src_file_name)->required(), "Input cloud file (.ply)")
     ("target,t", po::value<std::string>(&tgt_file_name)->required(), "Input target file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
-    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated point cloud in a .ply file")
+    ("accumulated,a", po::value<std::string>(&accumulated_file_name), "Saves the accumulated cloud in a .ply file")
     ("roll,r", po::value<double>(&roll)->default_value(0.0), "Rotation in X - degrees (Roll)")
     ("pitch,p", po::value<double>(&pitch)->default_value(0.0), "Rotation in Y - degrees (Pitch)")
     ("yaw,y", po::value<double>(&yaw)->default_value(0.0), "Rotation in Z - degrees (Yaw)")
@@ -59,7 +58,8 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Rotation tool to translate one point cloud with regard to one reference point cloud." << std::endl << std::endl;
+      std::cout << "Rotation tool to translate one point cloud with regard to one reference point cloud." << std::endl
+                << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }
@@ -69,7 +69,8 @@ int main(int argc, char* argv[]) {
       tgt_file_name = vm["target"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -t target.ply -o output.ply [opts]");
+      throw std::string("Correct mode of use: " + std::string(argv[0]) +
+                        " -i input.ply -t target.ply -o output.ply [opts]");
     }
 
     b_accumulated_file = vm.count("accumulated");

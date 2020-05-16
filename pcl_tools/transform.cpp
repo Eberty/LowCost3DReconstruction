@@ -6,9 +6,9 @@
 #include <bits/stdc++.h>
 
 // Point cloud library
+#include <pcl/common/transforms.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
-#include <pcl/common/transforms.h>
 
 // Boost
 #include <boost/program_options.hpp>
@@ -53,7 +53,8 @@ int main(int argc, char* argv[]) {
       output_file_name = vm["output"].as<std::string>();
       transform_file = vm["transform"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -t transform_file.txt");
+      throw std::string("Correct mode of use: " + std::string(argv[0]) +
+                        " -i input.ply -o output.ply -t transform_file.txt");
     }
 
     PointC::Ptr source_cloud(new PointC);

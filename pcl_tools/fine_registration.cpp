@@ -68,7 +68,8 @@ int main(int argc, char* argv[]) {
       tgt_file_name = vm["target"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -t target.ply -o output.ply [opts]");
+      throw std::string("Correct mode of use: " + std::string(argv[0]) +
+                        " -i input.ply -t target.ply -o output.ply [opts]");
     }
 
     max_iterations = vm["max_iterations"].as<int>();

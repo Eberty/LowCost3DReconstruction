@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     ("input,i", po::value<std::string>(&input_file_name)->required(), "Input file (.ply)")
     ("output,o", po::value<std::string>(&output_file_name)->required(), "Output file (.ply)")
     ("outliers_file,f", "Saves the outliers in a ply file")
-    ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(50), "N. of neighbors to analyze for each point")
+    ("neighbors,n", po::value<uint>(&number_of_neighbors)->default_value(50), "Neighbors to analyze for each point")
     ("dev_mult,d", po::value<double>(&deviation_multiplier)->default_value(1.0), "Standard deviation multiplier");
 
     // Use a parser to evaluate the command line
@@ -47,7 +47,9 @@ int main(int argc, char* argv[]) {
 
     // Store the command-line options evaluated by the parser
     if (vm.count("help")) {
-      std::cout << "Remove noisy measurements from a point cloud dataset using statistical analysis techniques." << std::endl << std::endl;
+      std::cout << "Remove noisy measurements from a point cloud dataset using statistical analysis techniques."
+                << std::endl
+                << std::endl;
       std::cout << desc << std::endl;
       return 0;
     }

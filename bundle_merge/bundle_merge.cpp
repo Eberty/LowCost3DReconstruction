@@ -39,7 +39,7 @@ bool bundlerTxt(const std::string& input_file_path, const std::string& output_fi
 }
 
 bool bundlerOut(const std::string& meshlab_file_path, const std::string& input_file_path,
-                const std::string& output_file_path, std::vector<Cameras>& cameras) {
+                const std::string& output_file_path, std::vector<Cameras>& cameras) {  // NOLINT
   std::ofstream output_file(output_file_path);
   if (!output_file.is_open()) {
     std::cout << "Unable to open file: " << output_file_path << std::endl;
@@ -125,7 +125,7 @@ int compare(std::string s1, std::string s2) {
   return (s1.compare(s2) == 0);
 }
 
-void getFileNameAndPath(const std::string& str, std::string& file_name, std::string& path) {
+void getFileNameAndPath(const std::string& str, std::string& file_name, std::string& path) {  // NOLINT
   size_t pos = 0;
   if ((pos = str.find_last_of("/")) != std::string::npos) {
     path = str.substr(0, pos + 1);
@@ -154,8 +154,8 @@ int main(int argc, char* argv[]) {
     po::options_description desc("Options");
     desc.add_options()
     ("help,h", "Print help message")
-    ("meshlab_bundle,m", po::value<std::string>(&meshlab_bundle)->required(), "Input: meshlab bundle file (.out)")
-    ("images,i", po::value<std::vector<std::string>>(&images)->multitoken(), "Input: vector with images used on meshlab bundle file")
+    ("meshlab_bundle,m", po::value<std::string>(&meshlab_bundle)->required(), "Meshlab bundle file (.out)")
+    ("images,i", po::value<std::vector<std::string>>(&images)->multitoken(), "Images used on meshlab bundle file")
     ("bundle,b", po::value<std::string>(&bundle_file_name)->required(), "Original bundle file (.out)")
     ("list,l", po::value<std::string>(&list_file_name)->required(), "Original list file (.txt)")
     ("prefix,p", po::value<std::string>(&output_prefix)->default_value("merged"), "Prefix for output files");
