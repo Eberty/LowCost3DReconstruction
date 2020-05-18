@@ -8,7 +8,7 @@
 for ARG in "${@:1}"; do
     if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
         echo "Usage: "
-        echo "      source ${BASH_SOURCE} <object_name.ply> [dense]"
+        echo "      source ${BASH_SOURCE} <object_name.ply> [dense [hybrid]]"
         return;
     fi
 done
@@ -70,35 +70,59 @@ LC_ALL=C meshlab sfm_model.ply 2> /dev/null
 
 # ----------------------------------------------------------------------
 
+# Create hybrid mesh
+MESH=${FILE_NAME}_transformed.ply
+MODEL_NAME=model
+
+if [[ ( ${2} && "${2,,}" == "dense" ) && ( ${3} && "${3,,}" == "hybrid" ) ]]; then
+    echo "----- Create hybrid mesh -----"
+    echo "In order to make the mesh as accurate as possible, remove the points that do not belong to the object of interest in the tmp.ply file and save it"
+    cp sfm_model.ply tmp.ply
+    LC_ALL=C meshlab tmp.ply 2> /dev/null
+
+    ${EXE_DIR}/cloud_downsampling -i tmp.ply -o tmp_2.ply -s 0.05
+    ${EXE_DIR}/accumulate_clouds -i ${MESH} -t tmp_2.ply -o tmp_3.ply -r 0.05 -c 0 -d 0 -n
+
+    mv tmp_3_negative.ply sfm_complement.ply
+    ${EXE_DIR}/accumulate_clouds -i sfm_complement.ply -t tmp.ply -o hybrid_model.ply -a
+
+    MESH=hybrid_model.ply
+    MODEL_NAME=hybrid
+
+    rm tmp.ply tmp_2.ply tmp_3.ply
+fi
+
+# ----------------------------------------------------------------------
+
 # Step 2: Reconstruction
 cp ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx ${PWD}
-eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o mesh_file.ply -s mesh_reconstruction.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i ${MESH} -o mesh_file.ply -s mesh_reconstruction.mlx 2> /dev/null
 rm ${PWD}/mesh_reconstruction.mlx
 
 # ----------------------------------------------------------------------
 
 # Step 3: Use the new model for texturization
 cp mesh_file.ply ${SFM_DIR}/mesh_file.ply
-${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model.mvs --mesh-file mesh_file.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model.mvs --mesh-file mesh_file.ply --smooth 0 --working-folder ${SFM_DIR} --output-file ${SFM_DIR}/${MODEL_NAME}_mesh.mvs
 
 # ----------------------------------------------------------------------
 
 # Step 4: Mesh texturing for computing a sharp and accurate texture to color the mesh
-${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/model_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/${MODEL_NAME}_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231 --working-folder ${SFM_DIR}
 
 rm ${SFM_DIR}/*.log
 
 # ----------------------------------------------------------------------
 
 # Step 5: Copy result to current dir
-cp ${SFM_DIR}/model_mesh_texture.png ${PWD}
-cp ${SFM_DIR}/model_mesh_texture.ply ${PWD}
+cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.png ${PWD}
+cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.ply ${PWD}
 
 # Convert to OBJ
-# eval ${MESHLABSERVER} -i model_mesh_texture.ply -o model_mesh_texture.obj -m vn wt 2> /dev/null
-# mv model_mesh_texture.obj.mtl model_mesh_texture.mtl
-# sed -i 's/model_mesh_texture.obj.mtl/model_mesh_texture.mtl/' model_mesh_texture.obj
+# eval ${MESHLABSERVER} -i ${MODEL_NAME}_mesh_texture.ply -o ${MODEL_NAME}_mesh_texture.obj -m vn wt 2> /dev/null
+# mv ${MODEL_NAME}_mesh_texture.obj.mtl ${MODEL_NAME}_mesh_texture.mtl
+# sed -i 's/${MODEL_NAME}_mesh_texture.obj.mtl/${MODEL_NAME}_mesh_texture.mtl/' ${MODEL_NAME}_mesh_texture.obj
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C meshlab model_mesh_texture.ply 2> /dev/null
+# LC_ALL=C meshlab ${MODEL_NAME}_mesh_texture.ply 2> /dev/null
