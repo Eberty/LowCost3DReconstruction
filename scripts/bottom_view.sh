@@ -121,4 +121,4 @@ cd ${CUR_DIR}
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C meshlab final_mesh_texture.ply 2> /dev/null
+# LC_ALL=C snap run meshlab final_mesh_texture.ply 2> /dev/null

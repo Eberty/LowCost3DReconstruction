@@ -122,5 +122,5 @@ rm ${SFM_DIR}/*.log
 
 cd ${CUR_DIR}
 
-# LC_ALL=C meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
-# LC_ALL=C meshlab ${SFM_DIR}/model_dense_outlier_removal.ply 2> /dev/null
+# LC_ALL=C snap run meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
+# LC_ALL=C snap run meshlab ${SFM_DIR}/model_dense_outlier_removal.ply 2> /dev/null

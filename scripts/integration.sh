@@ -66,7 +66,7 @@ rm tmp.ply tmp.txt
 echo "----- Fine alignment -----"
 echo "Open meshlab with result, open ${FILE_NAME}_transformed.ply, align using 4-point based for rigid transformation, apply ICP align"
 echo "Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply"
-LC_ALL=C meshlab sfm_model.ply 2> /dev/null
+LC_ALL=C snap run meshlab sfm_model.ply 2> /dev/null
 
 # ----------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ if [[ ( ${2} && "${2,,}" == "dense" ) && ( ${3} && "${3,,}" == "hybrid" ) ]]; th
     echo "----- Create hybrid mesh -----"
     echo "In order to make the mesh as accurate as possible, remove the points that do not belong to the object of interest in the tmp.ply file and save it"
     cp sfm_model.ply tmp.ply
-    LC_ALL=C meshlab tmp.ply 2> /dev/null
+    LC_ALL=C snap run meshlab tmp.ply 2> /dev/null
 
     ${EXE_DIR}/cloud_downsampling -i tmp.ply -o tmp_2.ply -s 0.05
     ${EXE_DIR}/accumulate_clouds -i ${MESH} -t tmp_2.ply -o tmp_3.ply -r 0.05 -c 0 -d 0 -n
@@ -125,4 +125,4 @@ cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.ply ${PWD}
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C meshlab ${MODEL_NAME}_mesh_texture.ply 2> /dev/null
+# LC_ALL=C snap run meshlab ${MODEL_NAME}_mesh_texture.ply 2> /dev/null
