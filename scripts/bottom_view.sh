@@ -102,7 +102,11 @@ ${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/final.mvs --mesh-file ${SFM_DIR}/mesh_
 # ----------------------------------------------------------------------
 
 # Mesh texturing for computing a sharp and accurate texture to color the mesh
-${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color 16744231 --working-folder ${SFM_DIR}
+ORANGE=16744231
+YELLOW=16776960
+WHITE=16777215
+BLACK=0
+${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${ORANGE} --working-folder ${SFM_DIR} --export-type ply --close-holes 50
 
 rm ${SFM_DIR}/*.log
 
