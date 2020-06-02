@@ -1,0 +1,19 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <xmlfilter name="Screened Poisson Surface Reconstruction">
+  <xmlparam name="cgDepth" value="0"/>
+  <xmlparam name="confidence" value="false"/>
+  <xmlparam name="depth" value="7"/>
+  <xmlparam name="fullDepth" value="5"/>
+  <xmlparam name="iters" value="8"/>
+  <xmlparam name="pointWeight" value="1"/>
+  <xmlparam name="preClean" value="false"/>
+  <xmlparam name="samplesPerNode" value="5"/>
+  <xmlparam name="scale" value="1.5"/>
+  <xmlparam name="visibleLayer" value="false"/>
+ </xmlfilter>
+ <filter name="Change the current layer">
+  <Param tooltip="The name of the current mesh" type="RichMesh" value="0" name="mesh" description="Mesh"/>
+ </filter>
+ <filter name="Delete Current Mesh"/>
+</FilterScript>

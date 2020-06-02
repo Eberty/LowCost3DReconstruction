@@ -96,15 +96,13 @@ rm ${PWD}/normal_normalize.mlx
 
 # Run MVS densify point-cloud for obtaining a complete and accurate as possible point-cloud
 if [[ ${2} && "${2,,}" == "dense" ]]; then
-    ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model.mvs
-    ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.8
-    ${EXE_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 100 --dev_mult 10.0
-    ${EXE_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
-    ${EXE_DIR}/normal_estimation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 75 --centroid
+    ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model.mvs --estimate-normals 2
+    ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model_dense.mvs --estimate-normals 2 --filter-point-cloud -1 -o model_dense.mvs
 
-    cp ${MESHLAB_SCRIPTS_DIR}/normal_normalize.mlx ${PWD}
-    eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn -s normal_normalize.mlx 2> /dev/null
-    rm ${PWD}/normal_normalize.mlx
+    ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense_filtered.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.8
+    ${EXE_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
+    ${EXE_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --dev_mult 5.0
+    eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn 2> /dev/null
 
     # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
     # ${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model_dense.mvs --remove-spurious 60 --output-file ${SFM_DIR}/sfm_dense_mesh.mvs
