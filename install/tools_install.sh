@@ -24,5 +24,11 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/libglut.so
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3 /usr/lib/libglut.so.3
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3.9.0 /usr/lib/libglut.so.3.9.0
 
-sudo apt install snap -y
-sudo snap install meshlab
+CUR_DIR=${PWD}
+
+cd ~
+git clone --recursive https://github.com/cnr-isti-vclab/meshlab
+bash meshlab/install/linux/linux_setup_env_ubuntu.sh
+bash meshlab/install/linux/linux_build.sh
+
+cd ${CUR_DIR}

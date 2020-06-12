@@ -61,7 +61,7 @@ OPENMVS_DIR=/usr/local/bin/OpenMVS
 EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # Set meshlabserver command
-MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+MESHLABSERVER="LC_ALL=C ~/meshlab/distrib/meshlabserver"
 
 # ----------------------------------------------------------------------
 
@@ -106,7 +106,7 @@ ORANGE=16744231
 YELLOW=16776960
 WHITE=16777215
 BLACK=0
-${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${ORANGE} --working-folder ${SFM_DIR} --export-type ply --close-holes 50
+${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --working-folder ${SFM_DIR} --export-type ply --close-holes 50 --resolution-level 1
 
 rm ${SFM_DIR}/*.log
 
@@ -125,4 +125,4 @@ cd ${CUR_DIR}
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C snap run meshlab final_mesh_texture.ply 2> /dev/null
+# LC_ALL=C ~/meshlab/distrib/meshlab final_mesh_texture.ply 2> /dev/null

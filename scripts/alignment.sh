@@ -58,7 +58,7 @@ Super4PCS_BIN=/usr/local/bin/Super4PCS
 EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # Set meshlabserver command
-MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+MESHLABSERVER="LC_ALL=C ~/meshlab/distrib/meshlabserver"
 
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/LowCost3DReconstruction
@@ -105,8 +105,10 @@ eval ${MESHLABSERVER} -i ${OBJECT_NAME}_${SR}mesh_bottom.ply -o bottom.ply -m vc
 for i in $(seq 1 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
     ${Super4PCS_BIN} -i "$(( 10#${i} - 01 ))".ply ${i}.ply -r tmp.ply -t 10 -m tmp.txt -o 0.6 -d 3.0 -n 700
     sed -i '1,2d' tmp.txt
-    ${EXE_DIR}/transform -i ${i}.ply -o ${i}.ply -t tmp.txt
-    eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn 2> /dev/null
+    for j in $(seq ${i} "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
+        ${EXE_DIR}/transform -i ${j}.ply -o ${j}.ply -t tmp.txt
+        eval ${MESHLABSERVER} -i ${j}.ply -o ${j}.ply -m vc vn &> /dev/null
+    done
 done
 
 rm tmp.ply tmp.txt
@@ -114,7 +116,7 @@ rm tmp.ply tmp.txt
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "For now use meshlab: open all [number].ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
-LC_ALL=C snap run meshlab 2> /dev/null
+LC_ALL=C ~/meshlab/distrib/meshlab &> /dev/null
 
 # Remove outliers
 cp ${OBJECT_NAME}.ply ${OBJECT_NAME}_backup.ply
@@ -132,7 +134,7 @@ ${EXE_DIR}/centroid_align -i bottom.ply -t ${OBJECT_NAME}.ply -o bottom.ply --ro
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "For now use meshlab: open top.ply and bottom.ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
-LC_ALL=C snap run meshlab ${OBJECT_NAME}.ply 2> /dev/null
+LC_ALL=C ~/meshlab/distrib/meshlab ${OBJECT_NAME}.ply &> /dev/null
  
 # ----------------------------------------------------------------------
 
@@ -144,4 +146,4 @@ eval ${MESHLABSERVER} -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}.ply -m vc vn -s no
 
 rm ${PWD}/*.mlx
 
-# LC_ALL=C snap run meshlab ${OBJECT_NAME}.ply 2> /dev/null
+# LC_ALL=C ~/meshlab/distrib/meshlab ${OBJECT_NAME}.ply 2> /dev/null

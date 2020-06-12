@@ -39,7 +39,7 @@ Super4PCS_BIN=/usr/local/bin/Super4PCS
 EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # Set meshlabserver command
-MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+MESHLABSERVER="LC_ALL=C ~/meshlab/distrib/meshlabserver"
 
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/LowCost3DReconstruction
@@ -66,7 +66,7 @@ rm tmp.ply tmp.txt
 echo "----- Fine alignment -----"
 echo "Open meshlab with result, open ${FILE_NAME}_transformed.ply, align using 4-point based for rigid transformation, apply ICP align"
 echo "Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply"
-LC_ALL=C snap run meshlab sfm_model.ply 2> /dev/null
+LC_ALL=C ~/meshlab/distrib/meshlab sfm_model.ply 2> /dev/null
 
 # ----------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ if [[ ( ${2} && "${2,,}" == "dense" ) && ( ${3} && "${3,,}" == "hybrid" ) ]]; th
     echo "----- Create hybrid mesh -----"
     echo "In order to make the mesh as accurate as possible, remove the points that do not belong to the object of interest in the tmp.ply file and save it"
     cp sfm_model.ply tmp.ply
-    LC_ALL=C snap run meshlab tmp.ply 2> /dev/null
+    LC_ALL=C ~/meshlab/distrib/meshlab tmp.ply 2> /dev/null
 
     ${EXE_DIR}/cloud_downsampling -i tmp.ply -o tmp_2.ply -s 0.05
     ${EXE_DIR}/accumulate_clouds -i ${MESH} -t tmp_2.ply -o tmp_3.ply -r 0.05 -c 0 -d 0 -n
@@ -112,7 +112,7 @@ ORANGE=16744231
 YELLOW=16776960
 WHITE=16777215
 BLACK=0
-${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/${MODEL_NAME}_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${ORANGE} --working-folder ${SFM_DIR} --export-type ply --close-holes 50
+${OPENMVS_DIR}/TextureMesh ${SFM_DIR}/${MODEL_NAME}_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --working-folder ${SFM_DIR} --export-type ply --close-holes 50 --resolution-level 1
 
 rm ${SFM_DIR}/*.log
 
@@ -129,4 +129,4 @@ cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.ply ${PWD}
 
 # ----------------------------------------------------------------------
 
-# LC_ALL=C snap run meshlab ${MODEL_NAME}_mesh_texture.ply 2> /dev/null
+# LC_ALL=C ~/meshlab/distrib/meshlab ${MODEL_NAME}_mesh_texture.ply 2> /dev/null

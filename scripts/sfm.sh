@@ -56,7 +56,7 @@ OPENMVS_DIR=/usr/local/bin/OpenMVS
 EXE_DIR=/usr/local/LowCost3DReconstruction
 
 # Set meshlabserver command
-MESHLABSERVER="LC_ALL=C meshlab.meshlabserver"
+MESHLABSERVER="LC_ALL=C ~/meshlab/distrib/meshlabserver"
 
 # Set directory with meshlab scripts
 MESHLAB_SCRIPTS_DIR=/usr/local/LowCost3DReconstruction
@@ -120,5 +120,5 @@ rm ${SFM_DIR}/*.log
 
 cd ${CUR_DIR}
 
-# LC_ALL=C snap run meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
-# LC_ALL=C snap run meshlab ${SFM_DIR}/model_dense_outlier_removal.ply 2> /dev/null
+# LC_ALL=C ~/meshlab/distrib/meshlab ${SFM_DIR}/model_outlier_removal.ply 2> /dev/null
+# LC_ALL=C ~/meshlab/distrib/meshlab ${SFM_DIR}/model_dense_outlier_removal.ply 2> /dev/null
