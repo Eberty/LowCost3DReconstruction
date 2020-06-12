@@ -50,6 +50,7 @@ sudo apt install -y freeglut3-dev libglew-dev libglfw3-dev
 # OpenMVS
 git clone https://github.com/cdcseacave/openMVS.git openMVS
 cd openMVS
+git checkout develop
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DVCG_ROOT="$main_path/vcglib" -DOpenMVS_USE_CUDA=ON
