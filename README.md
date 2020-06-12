@@ -64,12 +64,11 @@ source run_all_install.sh
 
 &nbsp;
 
-**NOTE:** in particular, for CUDA, it was not created a bash to install it. To do this, you can follow some of these tutorials:
+**NOTE:** in particular, for CUDA, it was not created a bash to install it. To do this, you can follow this tutorial:
 
-* <https://www.pugetsystems.com/labs/hpc/How-to-install-CUDA-9-2-on-Ubuntu-18-04-1184/>
-* <https://askubuntu.com/questions/799184/how-can-i-install-cuda-on-ubuntu-16-04>
+* <https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130>
 
-It's recommended to install CUDA after running *tools_install.sh* if your PC has a NVIDA graphics card.
+It's recommended to install CUDA before running *run_all_install.sh* if your PC has a NVIDA graphics card.
 
 ### **Building**
 
