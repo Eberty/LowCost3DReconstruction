@@ -99,8 +99,9 @@ if [[ ${2} && "${2,,}" == "dense" ]]; then
     ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model.mvs --estimate-normals 2
     ${OPENMVS_DIR}/DensifyPointCloud ${SFM_DIR}/model_dense.mvs --estimate-normals 2 --filter-point-cloud -1 -o model_dense.mvs
 
-    ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense_filtered.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.8
+    ${EXE_DIR}/crop_cloud -i ${SFM_DIR}/model_dense_filtered.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 1.9
     ${EXE_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
+    # ${EXE_DIR}/planar_segmentation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --threshold 0.05
     ${EXE_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --dev_mult 5.0
     eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn 2> /dev/null
 
