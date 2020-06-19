@@ -106,7 +106,7 @@ if [[ ${2} && "${2,,}" == "dense" ]]; then
     eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn 2> /dev/null
 
     # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
-    # ${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model_dense.mvs --remove-spurious 60 --output-file ${SFM_DIR}/sfm_dense_mesh.mvs
+    # ${OPENMVS_DIR}/ReconstructMesh ${SFM_DIR}/model_dense_filtered.mvs --remove-spurious 60 --output-file ${SFM_DIR}/sfm_dense_mesh.mvs
 
     # Mesh refinement for recovering all fine details
     # ${OPENMVS_DIR}/RefineMesh --resolution-level 1 ${SFM_DIR}/sfm_dense_mesh.mvs
