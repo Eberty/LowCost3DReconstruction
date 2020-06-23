@@ -96,7 +96,7 @@ fi
 
 # Step 2: Reconstruction
 cp ${MESHLAB_SCRIPTS_DIR}/mesh_reconstruction.mlx ${PWD}
-eval ${MESHLABSERVER} -i ${MESH} -o mesh_file.ply -s mesh_reconstruction.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i ${MESH} -o mesh_file.ply -m vc vq -s mesh_reconstruction.mlx 2> /dev/null
 rm ${PWD}/mesh_reconstruction.mlx
 
 # ----------------------------------------------------------------------

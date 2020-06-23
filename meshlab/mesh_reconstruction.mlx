@@ -1,19 +1,19 @@
 <!DOCTYPE FilterScript>
 <FilterScript>
  <filter name="Surface Reconstruction: Screened Poisson">
-  <Param value="false" name="visibleLayer" isxmlparam="0" type="RichBool" tooltip="Enabling this flag means that all the visible layers will be used for providing the points." description="Merge all visible layers"/>
-  <Param value="7" name="depth" isxmlparam="0" type="RichInt" tooltip="This integer is the maximum depth of the tree that will be used for surface reconstruction. Running at depth d corresponds to solving on a voxel grid whose resolution is no larger than 2^d x 2^d x 2^d. Note that since the reconstructor adapts the octree to the sampling density, the specified reconstruction depth is only an upper bound. The default value for this parameter is 8." description="Reconstruction Depth"/>
-  <Param value="5" name="fullDepth" isxmlparam="0" type="RichInt" tooltip="This integer specifies the depth beyond depth the octree will be adapted. At coarser depths, the octree will be complete, containing all 2^d x 2^d x 2^d nodes. The default value for this parameter is 5." description="Adaptive Octree Depth"/>
-  <Param value="0" name="cgDepth" isxmlparam="0" type="RichInt" tooltip="This integer is the depth up to which a conjugate-gradients solver will be used to solve the linear system. Beyond this depth Gauss-Seidel relaxation will be used. The default value for this parameter is 0." description="Conjugate Gradients Depth"/>
-  <Param value="1.5" name="scale" isxmlparam="0" type="RichFloat" tooltip="This floating point value specifies the ratio between the diameter of the cube used for reconstruction and the diameter of the samples' bounding cube. The default value is 1.1." description="Scale Factor"/>
-  <Param value="3" name="samplesPerNode" isxmlparam="0" type="RichFloat" tooltip="This floating point value specifies the minimum number of sample points that should fall within an octree node as the octree construction is adapted to sampling density. For noise-free samples, small values in the range [1.0 - 5.0] can be used. For more noisy samples, larger values in the range [15.0 - 20.0] may be needed to provide a smoother, noise-reduced, reconstruction. The default value is 1.5." description="Minimum Number of Samples"/>
-  <Param value="4" name="pointWeight" isxmlparam="0" type="RichFloat" tooltip="This floating point value specifies the importants that interpolation of the point samples is given in the formulation of the screened Poisson equation. The results of the original (unscreened) Poisson Reconstruction can be obtained by setting this value to 0. The default value for this parameter is 4." description="Interpolation Weight"/>
-  <Param value="8" name="iters" isxmlparam="0" type="RichInt" tooltip="This integer value specifies the number of Gauss-Seidel relaxations to be performed at each level of the hierarchy. The default value for this parameter is 8." description="Gauss-Seidel Relaxations"/>
-  <Param value="false" name="confidence" isxmlparam="0" type="RichBool" tooltip="Enabling this flag tells the reconstructor to use the quality as confidence information; this is done by scaling the unit normals with the quality values. When the flag is not enabled, all normals are normalized to have unit-length prior to reconstruction." description="Confidence Flag"/>
-  <Param value="false" name="preClean" isxmlparam="0" type="RichBool" tooltip="Enabling this flag force a cleaning pre-pass on the data removing all unreferenced vertices or vertices with null normals." description="Pre-Clean"/>
+  <Param value="false" name="visibleLayer" isxmlparam="0" type="RichBool" description="Merge all visible layers"/>
+  <Param value="7" name="depth" isxmlparam="0" type="RichInt" description="Reconstruction Depth"/>
+  <Param value="5" name="fullDepth" isxmlparam="0" type="RichInt" description="Adaptive Octree Depth"/>
+  <Param value="0" name="cgDepth" isxmlparam="0" type="RichInt" description="Conjugate Gradients Depth"/>
+  <Param value="1.5" name="scale" isxmlparam="0" type="RichFloat" description="Scale Factor"/>
+  <Param value="3" name="samplesPerNode" isxmlparam="0" type="RichFloat" description="Minimum Number of Samples"/>
+  <Param value="4" name="pointWeight" isxmlparam="0" type="RichFloat" description="Interpolation Weight"/>
+  <Param value="8" name="iters" isxmlparam="0" type="RichInt" description="Gauss-Seidel Relaxations"/>
+  <Param value="false" name="confidence" isxmlparam="0" type="RichBool" description="Confidence Flag"/>
+  <Param value="false" name="preClean" isxmlparam="0" type="RichBool" description="Pre-Clean"/>
  </filter>
  <filter name="Change the current layer">
-  <Param value="0" name="layer" isxmlparam="0" type="RichMesh" tooltip="The name of the current layer" description="Layer Name"/>
+  <Param value="0" name="layer" isxmlparam="0" type="RichMesh" description="Layer Name"/>
  </filter>
  <filter name="Delete Current Mesh"/>
 </FilterScript>
