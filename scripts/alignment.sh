@@ -116,7 +116,8 @@ rm tmp.ply tmp.txt
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "For now use meshlab: open all [number].ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
-LC_ALL=C ~/meshlab/distrib/meshlab &> /dev/null
+FILES=$(ls +([0-9]).ply | sort -n)
+LC_ALL=C ~/meshlab/distrib/meshlab ${FILES} &> /dev/null
 
 # Remove outliers
 cp ${OBJECT_NAME}.ply ${OBJECT_NAME}_backup.ply
@@ -134,7 +135,7 @@ ${EXE_DIR}/centroid_align -i bottom.ply -t ${OBJECT_NAME}.ply -o bottom.ply --ro
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "For now use meshlab: open top.ply and bottom.ply, apply ICP align, flatten layers and save as ${OBJECT_NAME}.ply"
-LC_ALL=C ~/meshlab/distrib/meshlab ${OBJECT_NAME}.ply &> /dev/null
+LC_ALL=C ~/meshlab/distrib/meshlab ${OBJECT_NAME}.ply top.ply bottom.ply &> /dev/null
  
 # ----------------------------------------------------------------------
 
