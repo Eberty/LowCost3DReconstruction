@@ -7,6 +7,9 @@ capture/super_resolution_kv2/build/*
 # PCL
 pcl_tools/build/*
 
+# Align
+rotate_align/build/*
+
 # Interface
 bundle_merge/build/*
 
