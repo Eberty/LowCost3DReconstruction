@@ -32,7 +32,7 @@ Within the project *install* folder, there are some bash files. They are respons
 1. [tools_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/tools_install.sh)
     * To install packages that can be installed through the official Ubuntu repositories and other packages like libfreenect, colmap, OpenMVS and Super4PCS. This file also contains the installation of this `LowCost3DReconstruction` package itself.
 2. [cuda_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/cuda_install.sh)
-    * To install the CUDA Toolkit (Only tested on Ubuntu 16.04 - For newer ubuntu versions, replace all occurrences of `1604` with `1804` in the file.)
+    * To install the CUDA Toolkit (Works on Ubuntu 16.04 - For newer ubuntu versions, replace all occurrences of `1604` with `1804` in the file).
 
 Run `source <install_file.sh>` on your terminal to install all necessary dependencies and files.
 
@@ -151,10 +151,6 @@ source bottom_view.sh <meshlab_bundler.out> <raster_image_files>
 ```
 
 **Note:** This script uses files generated after the entire pipeline has been executed. Therefore, it must be executed from the same root folder as the other scripts.
-
-<!-- ## **See also**
-
-<https://github.com/Yochengliu/awesome-point-cloud-analysis> -->
 
 ## **Bugs & Feature Requests**
 

@@ -24,4 +24,5 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/bundle_merge/")
 # Install meshlab files
 install(DIRECTORY meshlab/
   DESTINATION ${CMAKE_INSTALL_PREFIX}/LowCost3DReconstruction
+  FILE_PERMISSIONS WORLD_READ WORLD_EXECUTE
 )

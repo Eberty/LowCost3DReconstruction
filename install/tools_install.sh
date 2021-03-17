@@ -152,7 +152,7 @@ cd ${CUR_DIR}
 
 # ------------- LowCost3DReconstruction -------------
 
-git clone https://github.com/Eberty/LowCost3DReconstruction.git
+git clone https://github.com/Eberty/LowCost3DReconstruction.git LowCost3DReconstruction
 cd LowCost3DReconstruction
 mkdir build
 cd build
