@@ -4,7 +4,7 @@
 
 ## **Overview**
 
-The purpose of this project is to produce a textured 3d model produced from the combination of structure-from-motion (SFM), multi-view-stereo (MVS) and deep camera capture techniques. Seeking to use low cost methodologies for 3D objects reconstruction, this project uses state-of-the-art libraries and the main elements that a 3D reconstruction pipeline should include: from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.
+The purpose of this project is to produce a textured 3D model produced from the combination of structure-from-motion (SFM), multi-view-stereo (MVS) and deep camera capture techniques. Seeking to use low cost methodologies for 3D objects reconstruction, this project uses state-of-the-art libraries and the main elements that a 3D reconstruction pipeline should include: from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.
 
 A pipeline composed of a hybrid 3D reconstruction approach was developed, combining the low resolution images of the Kinect sensor depth camera with the high resolution images of an external RGB camera, obtaining a three-dimensional models with considerable visual quality.
 
@@ -21,66 +21,24 @@ The source code is released under the [MIT](https://github.com/Eberty/LowCost3DR
 **Affiliation:** Universidade Federal da Bahia - UFBA\
 **Maintainer:** Eberty Alves da Silva, <eberty.silva@hotmail.com>
 
-The LowCost3DReconstruction package has been tested under *Ubuntu 16.04 LTS* and *Ubuntu 19.10*.
+The `LowCost3DReconstruction` package has been tested under *Ubuntu 16.04 LTS*.
 
 &nbsp;
 
-## **Installation**
+## **Building and Installation**
 
-### **Dependencies**
-
-First, on your terminal, update the package manager indexes:
-
-`sudo apt update`
-
-Then install git:
-
-`sudo apt install git -y`
-
-After installing git, you can clone this git repository: `git clone https://github.com/Eberty/LowCost3DReconstruction.git`.
-
-Within the *install* folder, there are several bash files. They are responsible for installing all the dependencies necessary for the this pipeline execution:
+Within the project *install* folder, there are some bash files. They are responsible for installing the dependencies necessary for this pipeline execution:
 
 1. [tools_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/tools_install.sh)
-    * To install packages that can be installed through the official ubuntu repositories
-2. [pcl_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/pcl_install.sh)
-    * To install the Point Cloud Library (PCL)
-3. [libfreenect2_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/libfreenect2_install.sh)
-    * To install the driver for Kinect v2
-4. [colmap_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/colmap_install.sh)
-    * To install the Structure-from-Motion (SfM) package
-5. [openmvs_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/openmvs_install.sh)
-    * To install the Multi-View Stereo (MVS) package
-6. [super4pcs_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/super4pcs_install.sh)
-    * To install a set of C++ libraries for 3D Global Registration
+    * To install packages that can be installed through the official Ubuntu repositories and other packages like libfreenect, colmap, OpenMVS and Super4PCS. This file also contains the installation of this `LowCost3DReconstruction` package itself.
+2. [cuda_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/cuda_install.sh)
+    * To install the CUDA Toolkit (Only tested on Ubuntu 16.04 - For newer ubuntu versions, replace all occurrences of `1604` with `1804` in the file.)
 
-Run `source <install_file.sh>` in your terminal to install each required dependency.
-
-To make your life even easier, we packed everything in one place and you can just run:
-
-```sh
-source run_all_install.sh
-```
+Run `source <install_file.sh>` on your terminal to install all necessary dependencies and files.
 
 &nbsp;
 
-**NOTE:** in particular, for CUDA, it was not created a bash to install it. To do this, you can follow this tutorial:
-
-* <https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130>
-
-It's recommended to install CUDA before running *run_all_install.sh* if your PC has a NVIDA graphics card.
-
-### **Building**
-
-After all dependencies are installed, run the following commands:
-
-```sh
-git clone https://github.com/Eberty/LowCost3DReconstruction.git
-cd LowCost3DReconstruction/
-mkdir build && cd build
-cmake ..
-make -j$(nproc) && sudo make install
-```
+**NOTE:** It's recommended to install CUDA before running *tools_install.sh* if your PC has a NVIDIA graphics card.
 
 ## **Usage**
 
@@ -164,31 +122,29 @@ source sfm.sh cpu
 source integration.sh object.ply
 ```
 
-You can also run all the executables generated by this project separately as well. They will all be installed in the folder `/usr/local/LowCost3DReconstruction`. Use `./<binary_file> -h` to see the options acepted by each program.
+You can also run all the executables generated by this project separately as well. They will all be installed in the folder `/usr/local/LowCost3DReconstruction`. Use `./<binary_file> -h` to see the options accepted by each program.
 
 ## **Texturization of bottom view**
 
 The images with respective poses used by the SFM system will not be able to apply a texture on the bottom of the object as this view will be hidden when object is not on air. To omit this effect, you can generate (post-apply) a second texture, using the SFM output and a photo of the bottom of the object.
 
-To produce a file with the new cameras (raster) for this post-apply is recommended to install meshlab (latest version):
+To produce a file with the new cameras (raster) for this post-apply is recommended to use the latest meshlab version already included as AppImage in this package.
 
-`sudo apt install snap -y && sudo snap install meshlab`
+You can produce the auxiliary file with the configuration of the new cameras in the following way:
 
-After, you can produce the auxiliary file with the configuration of the new cameras in the following way:
-
-1. Open meshlab: `snap run meshlab 2> /dev/null`
+1. Open the latest meshlab version typing on terminal: `/usr/local/LowCost3DReconstruction/MeshLab2020.12-linux.AppImage`
 2. Select **File** > **Import mesh** > "Choose the **model_mesh_texture.ply** file"
 3. Select **File** > **Import Raster...** > "Choose a image file"
 4. Select **Show Current Raster Mode** on menu
     * Press **Ctrl + H** to start from a initial point of view
     * You can use **Mouse right button** to rotate, **Ctrl + Mouse right button** to move and **Shift + Mouse right button** to scale
-    * Find a good alignment of an image with respect to the 3d model
+    * Find a good alignment of an image with respect to the 3D model
     * Select **Filters** > **Camera** > **Image alignment: Mutual Information** > Click on **Get shot** and **Apply** (Do this more than once for best results)
     * If in doubt, see: [Raster Layers: Set Raster Camera](https://www.youtube.com/watch?v=298OJABhkYs) and [Color Projection: Mutual Information, Basic](https://www.youtube.com/watch?v=Pv6_qFIr7gs)
 5. Select **Filters** > **Camera** > **Set Raster Camera** > Click on **Get shot** and **Apply**
 6. Select **Filters** > **Raster Layer** > **Export active rasters cameras to file** > "Choose a name, set the output format to **Bundler (.out)** and save using **Apply**"
 
-#### Finally, run:
+Finally, run
 
 ```sh
 source bottom_view.sh <meshlab_bundler.out> <raster_image_files>
@@ -196,9 +152,9 @@ source bottom_view.sh <meshlab_bundler.out> <raster_image_files>
 
 **Note:** This script uses files generated after the entire pipeline has been executed. Therefore, it must be executed from the same root folder as the other scripts.
 
-## **See also**
+<!-- ## **See also**
 
-<https://github.com/Yochengliu/awesome-point-cloud-analysis>
+<https://github.com/Yochengliu/awesome-point-cloud-analysis> -->
 
 ## **Bugs & Feature Requests**
 
