@@ -56,7 +56,8 @@ sudo apt install -y \
   libxmu-dev \
   mercurial \
   opencl-headers \
-  qtbase5-dev
+  qtbase5-dev \
+  wget
 
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.a /usr/lib/libglut.a
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/libglut.so
