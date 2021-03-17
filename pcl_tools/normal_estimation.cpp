@@ -6,6 +6,8 @@
 #include <bits/stdc++.h>
 
 // Point cloud library
+#include <pcl/search/impl/search.hpp>
+
 #include <pcl/features/normal_3d.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>

@@ -160,7 +160,6 @@ int main(int argc, char* argv[]) {
     ("list,l", po::value<std::string>(&list_file_name)->required(), "Original list file (.txt)")
     ("prefix,p", po::value<std::string>(&output_prefix)->default_value("merged"), "Prefix for output files");
 
-
     // Use a parser to evaluate the command line
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
