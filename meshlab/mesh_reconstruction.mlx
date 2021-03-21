@@ -1,19 +1,21 @@
 <!DOCTYPE FilterScript>
 <FilterScript>
  <filter name="Surface Reconstruction: Screened Poisson">
-  <Param value="false" name="visibleLayer" isxmlparam="0" type="RichBool" description="Merge all visible layers"/>
-  <Param value="7" name="depth" isxmlparam="0" type="RichInt" description="Reconstruction Depth"/>
-  <Param value="5" name="fullDepth" isxmlparam="0" type="RichInt" description="Adaptive Octree Depth"/>
-  <Param value="0" name="cgDepth" isxmlparam="0" type="RichInt" description="Conjugate Gradients Depth"/>
-  <Param value="1.5" name="scale" isxmlparam="0" type="RichFloat" description="Scale Factor"/>
-  <Param value="3" name="samplesPerNode" isxmlparam="0" type="RichFloat" description="Minimum Number of Samples"/>
-  <Param value="4" name="pointWeight" isxmlparam="0" type="RichFloat" description="Interpolation Weight"/>
-  <Param value="8" name="iters" isxmlparam="0" type="RichInt" description="Gauss-Seidel Relaxations"/>
-  <Param value="false" name="confidence" isxmlparam="0" type="RichBool" description="Confidence Flag"/>
-  <Param value="false" name="preClean" isxmlparam="0" type="RichBool" description="Pre-Clean"/>
+  <Param name="visibleLayer" value="false" type="RichBool" description="Merge all visible layers" isxmlparam="0"/>
+  <Param name="depth" value="7" type="RichInt" description="Reconstruction Depth" isxmlparam="0"/>
+  <Param name="fullDepth" value="5" type="RichInt" description="Adaptive Octree Depth" isxmlparam="0"/>
+  <Param name="cgDepth" value="0" type="RichInt" description="Conjugate Gradients Depth" isxmlparam="0"/>
+  <Param name="scale" value="1.5" type="RichFloat" description="Scale Factor" isxmlparam="0"/>
+  <Param name="samplesPerNode" value="3" type="RichFloat" description="Minimum Number of Samples" isxmlparam="0"/>
+  <Param name="pointWeight" value="4" type="RichFloat" description="Interpolation Weight" isxmlparam="0"/>
+  <Param name="iters" value="8" type="RichInt" description="Gauss-Seidel Relaxations" isxmlparam="0"/>
+  <Param name="confidence" value="false" type="RichBool" description="Confidence Flag" isxmlparam="0"/>
+  <Param name="preClean" value="false" type="RichBool" description="Pre-Clean" isxmlparam="0"/>
  </filter>
+
  <filter name="Change the current layer">
-  <Param value="0" name="layer" isxmlparam="0" type="RichMesh" description="Layer Name"/>
+  <Param name="layer" value="0" type="RichMesh" description="Layer Name" isxmlparam="0"/>
  </filter>
+
  <filter name="Delete Current Mesh"/>
 </FilterScript>

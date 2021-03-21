@@ -152,6 +152,10 @@ source bottom_view.sh <meshlab_bundler.out> <raster_image_files>
 
 **Note:** This script uses files generated after the entire pipeline has been executed. Therefore, it must be executed from the same root folder as the other scripts.
 
+## **Dataset example**
+
+You can download our ["horse" dataset](https://github.com/Eberty/LowCost3DReconstruction/releases/download/v1.0/dataset_horse_kv1.zip) to test our pipeline.
+
 ## **Bugs & Feature Requests**
 
 Please report bugs and request features using the [Issue Tracker](https://github.com/Eberty/LowCost3DReconstruction/issues).
