@@ -82,6 +82,8 @@ if [[ ${SR} == "sr" ]]; then
   ${LOW_COST_3D_RECONSTRUCTION_DIR}/super_resolution${KINECT_VERSION} --capture_name ${OBJECT_NAME} --bottom --sr_size ${SR_SIZE}
 fi
 
+# ----------------------------------------------------------------------
+
 # Scale Kinect ply files
 for i in $(seq 0 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
   ${LOW_COST_3D_RECONSTRUCTION_DIR}/scale -i ${OBJECT_NAME}_${SR}mesh_"$(( 10#${i} * 10#${CAPTURE_STEP} ))".ply -o ${i}.ply --scale 0.01
@@ -90,13 +92,20 @@ done
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/scale -i ${OBJECT_NAME}_${SR}mesh_top.ply -o top.ply --scale 0.01
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/scale -i ${OBJECT_NAME}_${SR}mesh_bottom.ply -o bottom.ply --scale 0.01
 
-# Fix normals
+# Fix normals and remove outliers
 for i in $(seq 0 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
-  eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx 2> /dev/null
+  eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
+  ${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${i}.ply -o ${i}.ply --neighbors 50 --dev_mult 5.0
+  eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn &> /dev/null
 done
 
-eval ${MESHLABSERVER} -i top.ply -o top.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx 2> /dev/null
-eval ${MESHLABSERVER} -i bottom.ply -o bottom.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i top.ply -o top.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
+${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i top.ply -o top.ply --neighbors 50 --dev_mult 5.0
+eval ${MESHLABSERVER} -i top.ply -o top.ply -m vc vn &> /dev/null
+
+eval ${MESHLABSERVER} -i bottom.ply -o bottom.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
+${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i bottom.ply -o bottom.ply --neighbors 50 --dev_mult 5.0
+eval ${MESHLABSERVER} -i bottom.ply -o bottom.ply -m vc vn &> /dev/null
 
 # ----------------------------------------------------------------------
 
@@ -112,22 +121,14 @@ done
 
 rm tmp.ply tmp.txt
 
+# Top and bottom
+${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i top.ply -t 0.ply -o top.ply --roll -90 --pitch 0 --yaw 180 --elevation 1
+${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i bottom.ply -t 0.ply -o bottom.ply --roll 90 --pitch 0 --yaw 0 --elevation -1
+
+# ----------------------------------------------------------------------
+
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
-echo "For now use meshlab: Apply ICP align for all [number].ply, flatten layers and save as ${OBJECT_NAME}.ply"
+echo "For now use meshlab: Apply ICP align for all ply files, flatten layers and save as ${OBJECT_NAME}.ply"
 FILES=$(ls +([0-9]).ply | sort -n)
-eval ${MESHLAB} ${FILES} &> /dev/null
-
-# Remove outliers
-cp ${OBJECT_NAME}.ply ${OBJECT_NAME}_backup.ply
-${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}.ply --neighbors 50 --dev_mult 3.0
-eval ${MESHLABSERVER} -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_normalize.mlx 2> /dev/null
-
-# Coarse alignment (Top and bottom)
-${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i top.ply -t ${OBJECT_NAME}.ply -o top.ply --roll -90 --pitch 0 --yaw 90 --elevation 50
-${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i bottom.ply -t ${OBJECT_NAME}.ply -o bottom.ply --roll 90 --pitch 0 --yaw 90 --elevation -50
-
-# Fine alignment (Top and bottom) - TODO
-echo "----- Fine alignment -----"
-echo "For now use meshlab: Apply ICP align ussing all ply files, flatten layers and save as ${OBJECT_NAME}.ply"
-eval ${MESHLAB} ${OBJECT_NAME}.ply top.ply bottom.ply &> /dev/null
+eval ${MESHLAB} ${FILES} top.ply bottom.ply &> /dev/null

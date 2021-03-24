@@ -71,7 +71,7 @@ ${OPENMVS_DIR}/InterfaceVisualSFM --input-file ${SFM_DIR}/model.nvm --working-fo
 # Remove unnecessary points that no belong to object
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/crop_cloud -i ${SFM_DIR}/model.ply -o ${SFM_DIR}/model_outlier_removal.ply --radius 3.0
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply --neighbors 50 --centroid
-eval ${MESHLABSERVER} -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_normalize.mlx 2> /dev/null
+eval ${MESHLABSERVER} -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_normalize.mlx &> /dev/null
 
 # ----------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ if [[ ${2} && "${2,,}" == "dense" ]]; then
   ${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
   ${LOW_COST_3D_RECONSTRUCTION_DIR}/planar_segmentation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --threshold 0.05
   ${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --dev_mult 5.0
-  eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn 2> /dev/null
+  eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn &> /dev/null
 
   # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
   # ${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model_dense_filtered.mvs --output-file ${SFM_DIR}/sfm_dense_mesh.mvs --remove-spurious 60 --working-folder ${SFM_DIR}

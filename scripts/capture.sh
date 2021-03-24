@@ -51,6 +51,3 @@ fi
 
 # Depth capture
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/depth_capture${KINECT_VERSION} --capture_name ${OBJECT_NAME} --capture_step ${CAPTURE_STEP} --sr_size ${SR_SIZE}
-
-# Set number of captures
-NUM_OF_CAPTURES=${?}

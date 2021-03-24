@@ -58,19 +58,19 @@ else
 fi
 
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i ${FILE_NAME}.ply -t sfm_model.ply -o ${FILE_NAME}.ply
-eval ${MESHLABSERVER} -i ${FILE_NAME}.ply -o ${FILE_NAME}.ply -m vc vn 2> /dev/null
+eval ${MESHLABSERVER} -i ${FILE_NAME}.ply -o ${FILE_NAME}.ply -m vc vn &> /dev/null
 
-${Super4PCS_BIN} -i sfm_model.ply ${FILE_NAME}.ply -r tmp.ply -t 10 -m tmp.txt -d 0.13
+${Super4PCS_BIN} -i sfm_model.ply ${FILE_NAME}.ply -r tmp.ply -t 15 -m tmp.txt -o 0.6 -d 0.03 -n 700
 sed -i '1,2d' tmp.txt
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${FILE_NAME}.ply -o ${FILE_NAME}_transformed.ply -t tmp.txt
-eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o ${FILE_NAME}_transformed.ply -m vc vn 2> /dev/null
+eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o ${FILE_NAME}_transformed.ply -m vc vn &> /dev/null
 rm tmp.ply tmp.txt
 
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
 echo "Opening meshlab with SFM model and ${FILE_NAME}_transformed.ply."
 echo "Align using 4-point based for rigid transformation, apply ICP align. Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply"
-eval ${MESHLAB} sfm_model.ply ${FILE_NAME}_transformed.ply 2> /dev/null
+eval ${MESHLAB} sfm_model.ply ${FILE_NAME}_transformed.ply &> /dev/null
 
 # ----------------------------------------------------------------------
 
