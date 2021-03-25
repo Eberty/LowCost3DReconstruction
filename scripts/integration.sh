@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copy this script into a folder with images (sfm) subfolder
+# Copy this script into a folder with an 'images' (SfM) subfolder
 
 # ----------------------------------------------------------------------
 
@@ -57,13 +57,19 @@ else
   cp ${SFM_DIR}/model_outlier_removal.ply sfm_model.ply
 fi
 
-${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i ${FILE_NAME}.ply -t sfm_model.ply -o ${FILE_NAME}.ply
-eval ${MESHLABSERVER} -i ${FILE_NAME}.ply -o ${FILE_NAME}.ply -m vc vn &> /dev/null
-
+# Get main transformation
 ${Super4PCS_BIN} -i sfm_model.ply ${FILE_NAME}.ply -r tmp.ply -t 15 -m tmp.txt -o 0.6 -d 0.03 -n 700
 sed -i '1,2d' tmp.txt
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${FILE_NAME}.ply -o ${FILE_NAME}_transformed.ply -t tmp.txt
 eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o ${FILE_NAME}_transformed.ply -m vc vn &> /dev/null
+
+# Also transform individual files
+FILES="$(ls +([0-9]).ply | sort -n) top.ply bottom.ply"
+for FILE in ${FILES}; do
+  ${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${FILE} -o ${FILE} -t tmp.txt
+  eval ${MESHLABSERVER} -i ${FILE} -o ${FILE} -m vc vn &> /dev/null
+done
+
 rm tmp.ply tmp.txt
 
 # Fine alignment - TODO

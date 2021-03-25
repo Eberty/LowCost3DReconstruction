@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copy this script into a folder with images (sfm) subfolder
+# Copy this script into a folder with an 'images' (SfM) subfolder
 
 # ----------------------------------------------------------------------
 

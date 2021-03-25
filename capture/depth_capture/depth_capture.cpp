@@ -476,12 +476,12 @@ int main(int argc, char **argv) {
       }
     }
 
-    // Returns the number of captures
-    return count_depth_mesh;
+    return 0;
   } catch (boost::program_options::error &msg) {
     std::cerr << "ERROR: " << msg.what() << std::endl;
   } catch (...) {
     std::cerr << "Some error has occurred." << std::endl;
   }
+
   return -1;
 }

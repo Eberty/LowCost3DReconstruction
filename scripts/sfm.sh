@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Copy this script into a folder with a subfolder of images
+# Copy this script into a folder with an 'images' subfolder
 
-# Extract images from video if need
+# Extract images from a video if need
 # ffmpeg -i video.mp4 -vf fps=2 image-%3d.png
 
 # ----------------------------------------------------------------------
@@ -11,7 +11,7 @@
 for ARG in "${@:1}"; do
   if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
     echo "Usage: "
-    echo "    source ${BASH_SOURCE} <use_gpu=true|false> [dense]"
+    echo "    source ${BASH_SOURCE} [dense]"
     return;
   fi
 done
@@ -28,16 +28,9 @@ if [[ ! -d ${SFM_DIR} || ! "$(ls -A ${SFM_DIR})" ]]; then
 fi
 
 # Set GPU usage
-GPU=true
-if [[ ${1} && ( "${1,,}" == "false" || "${1,,}" == "cpu" ) ]]; then
-  GPU=false
-else
-  if [[ ${1} && ( "${1,,}" == "true" || "${1,,}" == "gpu" ) ]]; then
-    GPU=true
-  else
-    echo "Please inform gpu usage (true or false)."
-    return;
-  fi
+GPU=false
+if [[ $(which nvcc) ]]; then
+  GPU=true
 fi
 echo "Using GPU: ${GPU}"
 
@@ -76,7 +69,7 @@ eval ${MESHLABSERVER} -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/mode
 # ----------------------------------------------------------------------
 
 # Run MVS densify point-cloud for obtaining a complete and accurate as possible point-cloud
-if [[ ${2} && "${2,,}" == "dense" ]]; then
+if [[ ${1} && "${1,,}" == "dense" ]]; then
   ${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model.mvs --working-folder ${SFM_DIR}
   ${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model_dense.mvs --output-file model_dense.mvs --filter-point-cloud -1 --working-folder ${SFM_DIR}
 

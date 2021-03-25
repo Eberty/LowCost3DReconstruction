@@ -8,9 +8,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 
 option(ENABLE_OPENCL "Enable OpenCL support" ON)
 
-# Set cmake prefix path to enable cmake to find freenect2
-# set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{HOME}/freenect2/lib/cmake/freenect2)
-
 find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(freenect2 REQUIRED)

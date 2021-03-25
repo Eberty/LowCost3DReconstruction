@@ -32,7 +32,7 @@ Within the project *install* folder, there are some bash files. They are respons
 1. [tools_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/tools_install.sh)
     * To install packages that can be installed through the official Ubuntu repositories and other packages like libfreenect, colmap, OpenMVS and Super4PCS. This file also contains the installation of this `LowCost3DReconstruction` package itself.
 2. [cuda_install.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/install/cuda_install.sh)
-    * To install the CUDA Toolkit (Works on Ubuntu 16.04 - For newer ubuntu versions, replace all occurrences of `1604` with `1804` in the file).
+    * To install the CUDA Toolkit (Works on Ubuntu 18.04 and 20.04 - For older Ubuntu versions, replace all occurrences of `1804` by `1604` in the file).
 
 Run `source <install_file.sh>` on your terminal to install all necessary dependencies and files.
 
@@ -77,9 +77,9 @@ The methodology described here is divided into four bash script files, responsib
 3. [sfm.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/scripts/sfm.sh)
     * This script calls a general-purpose Structure-from-Motion (SfM) and Multi-View Stereo (MVS) pipeline with command-line interface, offering a wide range of features for reconstruction with unordered image collections.
     * Based on: <https://peterfalkingham.com/2018/04/01/colmap-openmvs-scripts-updated/>.
-    * **Copy this script into the same workspace folder of the others scripts. Make sure to create a subfolder with `images` for SFM pipeline and execute: `source sfm.sh <use_gpu=true|false> [dense]`**
-    * If no CUDA enabled device is available, you can manually select to use CPU-based feature extraction and matching by setting the `use_gpu` option to false.
+    * **Copy this script into the same workspace folder of the others scripts. Make sure to create a subfolder with `images` for SFM pipeline and execute: `source sfm.sh [dense]`**
     * Use `dense` option to do a dense point cloud reconstruction in order to obtain a complete and accurate point cloud possible.
+    * If no CUDA enabled device is available the SFM `use_gpu` option is set to false.
 
 4. [integration.sh](https://github.com/Eberty/LowCost3DReconstruction/blob/master/scripts/integration.sh)
     * The integration consists in two stages: a) alignment between the point cloud produced by Kinect and the point cloud resulted from the SFM pipeline; b) reconstruction of the object's surface and  texturing.
@@ -96,7 +96,7 @@ The methodology described here is divided into four bash script files, responsib
 ```sh
 source capture.sh <object_name> <kinect_version=1|2>
 source alignment.sh <object_name> <num_of_captures> [sr <kinect_version=1|2>]
-source sfm.sh <use_gpu=true|false> [dense]
+source sfm.sh [dense]
 source integration.sh <object_name.ply> [dense [hybrid]]
 ```
 
@@ -109,7 +109,7 @@ source integration.sh <object_name.ply> [dense [hybrid]]
 ```sh
 source capture.sh museum_artifact 1
 source alignment.sh museum_artifact 30 sr 1
-source sfm.sh true dense
+source sfm.sh dense
 source integration.sh museum_artifact.ply dense
 ```
 
@@ -118,7 +118,7 @@ or
 ```sh
 source capture.sh object 2
 source alignment.sh object 44
-source sfm.sh cpu
+source sfm.sh
 source integration.sh object.ply
 ```
 
