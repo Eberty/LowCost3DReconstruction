@@ -10,6 +10,7 @@ sudo apt install -y \
   beignet-dev \
   build-essential \
   cmake \
+  curl \
   ffmpeg \
   freeglut3-dev \
   fuse \
@@ -57,6 +58,12 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.a /usr/lib/libglut.a
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/libglut.so
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3 /usr/lib/libglut.so.3
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3.9.0 /usr/lib/libglut.so.3.9.0
+
+# ------------- git-lfs -------------
+
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+sudo apt install -y git-lfs
+git lfs install
 
 # ------------- cmake latest version -------------
 
