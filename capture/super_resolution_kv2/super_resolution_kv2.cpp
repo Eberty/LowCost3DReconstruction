@@ -316,12 +316,11 @@ int main(int argc, char **argv) {
     }
 
     return 0;
-  } catch (boost::program_options::error &msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (cv::Exception &msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
   } catch (...) {
-    std::cout << "Some error has occurred." << std::endl;
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
+
   return -1;
 }

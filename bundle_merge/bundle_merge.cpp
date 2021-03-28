@@ -40,14 +40,6 @@ bool bundlerTxt(const std::string& input_file_path, const std::string& output_fi
 
 bool bundlerOut(const std::string& meshlab_file_path, const std::string& input_file_path,
                 const std::string& output_file_path, std::vector<Cameras>& cameras) {  // NOLINT
-  std::ofstream output_file(output_file_path);
-  if (!output_file.is_open()) {
-    std::cout << "Unable to open file: " << output_file_path << std::endl;
-    return false;
-  } else {
-    std::cout << "Saving: " << output_file_path << std::endl;
-  }
-
   {
     std::ifstream input_file(meshlab_file_path);
     if (input_file.is_open()) {
@@ -75,9 +67,17 @@ bool bundlerOut(const std::string& meshlab_file_path, const std::string& input_f
     }
   }
 
+  std::ofstream output_file(output_file_path);
   {
     std::ifstream input_file(input_file_path);
     if (input_file.is_open()) {
+      if (output_file.is_open()) {
+        std::cout << "Saving: " << output_file_path << std::endl;
+      } else {
+        std::cout << "Unable to open file: " << output_file_path << std::endl;
+        return false;
+      }
+
       std::string token;
       while (input_file.peek() == '#') {
         std::getline(input_file, token);
@@ -178,14 +178,14 @@ int main(int argc, char* argv[]) {
       list_file_name = vm["list"].as<std::string>();
       output_prefix = vm["prefix"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) +
-                        " -i <vector_images.png> -m meshlab_bundle.out -b bundle.out -l bundle-list.txt");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) +
+                             " -i <vector_images.png> -m meshlab_bundle.out -b bundle.out -l bundle-list.txt");
     }
 
     if (!compare(meshlab_bundle.substr(meshlab_bundle.find_last_of(".") + 1), "out") ||
         !compare(bundle_file_name.substr(bundle_file_name.find_last_of(".") + 1), "out") ||
         !compare(list_file_name.substr(list_file_name.find_last_of(".") + 1), "txt")) {
-      throw std::string("Extension on input files are incorrect");
+      throw std::runtime_error("Extension on input files are incorrect");
     }
 
     std::vector<Cameras> new_cameras;
@@ -194,24 +194,24 @@ int main(int argc, char* argv[]) {
     getFileNameAndPath(bundle_file_name, file_name, path);
     std::string output_bundler_path = path + output_prefix + "." + file_name;
     if (!bundlerOut(meshlab_bundle, bundle_file_name, output_bundler_path, new_cameras)) {
-      throw std::string("Error while writing bundler *.out file");
+      throw std::runtime_error("Error while writing bundler " + output_bundler_path + " file");
     }
 
     if (new_cameras.size() != images.size()) {
-      throw std::string("Image list must have the same number of cameras of " + meshlab_bundle);
+      throw std::runtime_error("Image list must have the same number of cameras of " + meshlab_bundle);
     }
 
     getFileNameAndPath(list_file_name, file_name, path);
     std::string output_list_path = path + output_prefix + "." + file_name;
     if (!bundlerTxt(list_file_name, output_list_path, images)) {
-      throw std::string("Error while writing bundler *.txt file");
+      throw std::runtime_error("Error while writing bundler " + output_list_path + " file");
     }
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cout << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

@@ -57,7 +57,8 @@ int main(int argc, char* argv[]) {
       output_file_name = vm["output"].as<std::string>();
       radius = vm["radius"].as<double>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -r [radius]");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) +
+                             " -i input.ply -o output.ply -r [radius]");
     }
     negative = vm.count("negative");
 
@@ -66,7 +67,7 @@ int main(int argc, char* argv[]) {
 
     // Load the point cloud data from disk
     if (pcl::io::loadPLYFile<PointT>(input_file_name, *point_cloud) == -1) {
-      throw std::string("Couldn't load input file");
+      throw std::runtime_error("Couldn't load input point cloud: " + input_file_name);
     }
 
     std::cout << "Cloud before filtering: " << std::endl;
@@ -83,7 +84,7 @@ int main(int argc, char* argv[]) {
     crop_box.setInputCloud(point_cloud);
     crop_box.filter(*cloud_filtered);
 
-    // Save ply with points croped
+    // Save ply with points cropped
     std::cout << "Cloud after filtering: " << std::endl;
     std::cout << *cloud_filtered << std::endl;
     pcl::io::savePLYFileBinary(output_file_name, *cloud_filtered);
@@ -98,10 +99,10 @@ int main(int argc, char* argv[]) {
     }
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cout << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

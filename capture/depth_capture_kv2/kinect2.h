@@ -35,6 +35,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -79,7 +80,7 @@ class Kinect2 {
     libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Warning));
 
     if (freenect2_.enumerateDevices() == 0) {
-      throw "No kinect2 connected!";
+      throw std::runtime_error("No kinect2 connected!");
     }
 
     switch (p) {
@@ -107,14 +108,14 @@ class Kinect2 {
     dev_ = freenect2_.openDevice(serial_, pipeline_);
 
     if (dev_ == NULL) {
-      throw "Failure opening device!";
+      throw std::runtime_error("Failure opening device!");
     }
 
     dev_->setColorFrameListener(&listener_);
     dev_->setIrAndDepthFrameListener(&listener_);
 
     if (!dev_->start()) {
-      throw "Error on start device!";
+      throw std::runtime_error("Error on start device!");
     }
 
     registration_ = new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams());

@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
       output_file_name = vm["output"].as<std::string>();
       scale = vm["scale"].as<double>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -s [scale]");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply -s [scale]");
     }
 
     PointC::Ptr point_cloud(new PointC);
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 
     // Load the point cloud data from disk
     if (pcl::io::loadPLYFile<PointT>(input_file_name, *point_cloud) == -1) {
-      throw std::string("Couldn't load input file");
+      throw std::runtime_error("Couldn't load input point cloud: " + input_file_name);
     }
 
     // Scale
@@ -72,10 +72,10 @@ int main(int argc, char* argv[]) {
     pcl::io::savePLYFileBinary(output_file_name, *cloud_scaled);
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cout << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

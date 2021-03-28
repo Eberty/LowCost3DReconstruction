@@ -426,12 +426,10 @@ int main(int argc, char *argv[]) {
     kinect.shutDown();
 
     return 0;
-  } catch (boost::program_options::error &msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
-  } catch (const char *msg) {
-    std::cerr << msg << std::endl;
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
   } catch (...) {
-    std::cerr << "Some error has occurred." << std::endl;
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

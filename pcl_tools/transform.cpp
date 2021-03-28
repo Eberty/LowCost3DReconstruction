@@ -53,8 +53,8 @@ int main(int argc, char* argv[]) {
       output_file_name = vm["output"].as<std::string>();
       transform_file = vm["transform"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) +
-                        " -i input.ply -o output.ply -t transform_file.txt");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) +
+                             " -i input.ply -o output.ply -t transform_file.txt");
     }
 
     PointC::Ptr source_cloud(new PointC);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
     // Load the point cloud data from disk
     if (pcl::io::loadPLYFile<PointT>(input_file_name, *source_cloud) == -1) {
-      throw std::string("Couldn't load input file");
+      throw std::runtime_error("Couldn't load input point cloud: " + input_file_name);
     }
 
     // Load the transform matrix data from txt file
@@ -72,12 +72,12 @@ int main(int argc, char* argv[]) {
       for (size_t i = 0; i < 4; i++) {
         for (size_t j = 0; j < 4; j++) {
           if (!(file >> matrix[i][j])) {
-            throw std::string("Error on read transform file: " + transform_file);
+            throw std::runtime_error("Error on read transform file: " + transform_file);
           }
         }
       }
     } else {
-      throw std::string("Unable to open file: " + transform_file);
+      throw std::runtime_error("Unable to open file: " + transform_file);
     }
 
     // Transform
@@ -92,10 +92,10 @@ int main(int argc, char* argv[]) {
     pcl::io::savePLYFileBinary(output_file_name, *transformed_cloud);
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cout << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

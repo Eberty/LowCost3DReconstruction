@@ -397,7 +397,7 @@ int main(int argc, char **argv) {
 
     int key = 0;
     if (freenect_sync_set_tilt_degs(0, 0)) {  // Returns nonzero on error
-      throw "No device found";
+      throw std::runtime_error("No device found");
     }
 
     // Loop to get captures
@@ -477,10 +477,10 @@ int main(int argc, char **argv) {
     }
 
     return 0;
-  } catch (boost::program_options::error &msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
   } catch (...) {
-    std::cerr << "Some error has occurred." << std::endl;
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

@@ -68,8 +68,8 @@ int main(int argc, char* argv[]) {
       tgt_file_name = vm["target"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) +
-                        " -i input.ply -t target.ply -o output.ply [opts]");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) +
+                             " -i input.ply -t target.ply -o output.ply [opts]");
     }
 
     number_of_neighbors = vm["clean_neighbors"].as<uint>();
@@ -83,12 +83,12 @@ int main(int argc, char* argv[]) {
 
     // Load point clouds data from disk
     if (pcl::io::loadPLYFile<PointT>(src_file_name, *cloud_src) == -1) {
-      throw std::string("Couldn't load input cloud file");
+      throw std::runtime_error("Couldn't load input point cloud: " + src_file_name);
     }
     std::cout << "Loaded " << cloud_src->size() << " data points from " << src_file_name << std::endl;
 
     if (pcl::io::loadPLYFile<PointT>(tgt_file_name, *cloud_tgt) == -1) {
-      throw std::string("Couldn't load input target file");
+      throw std::runtime_error("Couldn't load target point cloud: " + tgt_file_name);
     }
     std::cout << "Loaded " << cloud_tgt->size() << " data points from " << tgt_file_name << std::endl;
 
@@ -132,10 +132,10 @@ int main(int argc, char* argv[]) {
     }
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cerr << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cerr << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;

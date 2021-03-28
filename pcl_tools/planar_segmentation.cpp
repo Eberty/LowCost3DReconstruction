@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
       input_file_name = vm["input"].as<std::string>();
       output_file_name = vm["output"].as<std::string>();
     } else {
-      throw std::string("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply");
+      throw std::logic_error("Correct mode of use: " + std::string(argv[0]) + " -i input.ply -o output.ply");
     }
     threshold = vm["threshold"].as<double>();
     negative = vm.count("negative");
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
     // Load the point cloud data from disk
     if (pcl::io::loadPLYFile<PointT>(input_file_name, *point_cloud) == -1) {
-      throw std::string("Couldn't load input file");
+      throw std::runtime_error("Couldn't load input point cloud: " + input_file_name);
     }
 
     std::cout << "Cloud before filtering: " << std::endl;
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     seg.segment(*inliers, *coefficients);
 
     if (inliers->indices.size() == 0) {
-      throw std::string("Could not estimate a planar model for the given dataset");
+      throw std::runtime_error("Could not estimate a planar model for the given dataset");
     }
 
     // Extract indices
@@ -114,10 +114,10 @@ int main(int argc, char* argv[]) {
     }
 
     return 0;
-  } catch (boost::program_options::error& msg) {
-    std::cout << "ERROR: " << msg.what() << std::endl;
-  } catch (std::string msg) {
-    std::cout << msg << std::endl;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  } catch (...) {
+    std::cerr << "An unknown error has occurred." << std::endl;
   }
 
   return -1;
