@@ -23,6 +23,9 @@ target_link_libraries(cloud_downsampling ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(crop_cloud crop_cloud.cpp)
 target_link_libraries(crop_cloud ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(fine_registration fine_registration.cpp)
+target_link_libraries(fine_registration ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+
 add_executable(normal_estimation normal_estimation.cpp)
 target_link_libraries(normal_estimation ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -39,6 +42,6 @@ add_executable(transform transform.cpp)
 target_link_libraries(transform ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS
-  accumulate_clouds centroid_align cloud_downsampling crop_cloud normal_estimation outlier_removal planar_segmentation scale transform
+  accumulate_clouds centroid_align cloud_downsampling crop_cloud fine_registration normal_estimation outlier_removal planar_segmentation scale transform
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/LowCost3DReconstruction
 )
