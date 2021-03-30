@@ -8,7 +8,7 @@
 for ARG in "${@:1}"; do
   if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
     echo "Usage: "
-    echo "    source ${BASH_SOURCE} <object_name.ply> [dense [hybrid]]"
+    echo "    source ${BASH_SOURCE} <object_name.ply>"
     return;
   fi
 done
@@ -45,23 +45,22 @@ Super4PCS_BIN=/usr/local/bin/Super4PCS
 MESHLAB="LC_ALL=C ${LOW_COST_3D_RECONSTRUCTION_DIR}/MeshLab2020.12-linux.AppImage"
 MESHLABSERVER="LC_ALL=C ${LOW_COST_3D_RECONSTRUCTION_DIR}/MeshLabServer2020.12-linux.AppImage"
 
-# Set mesh file name (remove extention)
-FILE_NAME=${1%.*}
+# Set model name (remove extention)
+OBJECT_NAME=${1%.*}
+
+# Mesh empty colors
+ORANGE=16744231
+WHITE=16777215
+BLACK=0
 
 # ----------------------------------------------------------------------
 
-# Alignment -> Accurately register two point clouds created from different image spectrums
-if [[ ${2} && "${2,,}" == "dense" ]]; then
-  cp ${SFM_DIR}/model_dense_outlier_removal.ply sfm_model.ply
-else
-  cp ${SFM_DIR}/model_outlier_removal.ply sfm_model.ply
-fi
-
-# Get main transformation
-${Super4PCS_BIN} -i sfm_model.ply ${FILE_NAME}.ply -r tmp.ply -t 15 -m tmp.txt -o 0.6 -d 0.03 -n 700
+# Get main alignment transformation
+${Super4PCS_BIN} -i ${SFM_DIR}/model_dense_outlier_removal.ply ${OBJECT_NAME}.ply -r tmp.ply -t 15 -m tmp.txt -o 0.6 -d 0.03 -n 700
 sed -i '1,2d' tmp.txt
-${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${FILE_NAME}.ply -o ${FILE_NAME}_transformed.ply -t tmp.txt
-eval ${MESHLABSERVER} -i ${FILE_NAME}_transformed.ply -o ${FILE_NAME}_transformed.ply -m vc vn &> /dev/null
+${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}_transformed.ply -t tmp.txt
+${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i ${OBJECT_NAME}_transformed.ply -o ${OBJECT_NAME}_transformed.ply --leaf_size 0.01
+eval ${MESHLABSERVER} -i ${OBJECT_NAME}_transformed.ply -o ${OBJECT_NAME}_transformed.ply -m vc vn &> /dev/null
 
 # Also transform individual files
 FILES="$(ls +([0-9]).ply | sort -n) top.ply bottom.ply"
@@ -74,52 +73,31 @@ rm tmp.ply tmp.txt
 
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
-echo "Opening meshlab with SFM model and ${FILE_NAME}_transformed.ply."
-echo "Align using 4-point based for rigid transformation, apply ICP align. Fix matrix of tranformed mesh and save ${FILE_NAME}_transformed.ply"
-eval ${MESHLAB} sfm_model.ply ${FILE_NAME}_transformed.ply &> /dev/null
+echo "Opening meshlab with SFM model and ${OBJECT_NAME}_transformed.ply."
+echo "Please, apply ICP align, fix matrix of tranformed file and save as ${OBJECT_NAME}_transformed.ply"
+eval ${MESHLAB} ${SFM_DIR}/model_dense_outlier_removal.ply ${OBJECT_NAME}_transformed.ply &> /dev/null
 
 # ----------------------------------------------------------------------
 
-# Create hybrid mesh
-MESH=${FILE_NAME}_transformed.ply
-MODEL_NAME=model
-
-if [[ ( ${2} && "${2,,}" == "dense" ) && ( ${3} && "${3,,}" == "hybrid" ) ]]; then
-  echo "----- Create hybrid mesh -----"
-  cp sfm_model.ply tmp.ply
-
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i tmp.ply -o tmp_2.ply -s 0.05
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/accumulate_clouds -i ${MESH} -t tmp_2.ply -o tmp_3.ply -r 0.05 -c 0 -d 0 -n
-
-  mv tmp_3_negative.ply sfm_complement.ply
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/accumulate_clouds -i sfm_complement.ply -t tmp.ply -o hybrid_model.ply -a
-
-  MESH=hybrid_model.ply
-  MODEL_NAME=hybrid
-
-  rm tmp.ply tmp_2.ply tmp_3.ply
-fi
+# Create 3D model from depth sensor data
+eval ${MESHLABSERVER} -i ${OBJECT_NAME}_transformed.ply -o ${SFM_DIR}/kinect_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/kinect_mesh.mvs --mesh-file ${SFM_DIR}/kinect_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/kinect_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
 
 # ----------------------------------------------------------------------
 
-# Reconstruction
-eval ${MESHLABSERVER} -i ${MESH} -o mesh_file.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+# Create 3D model from SFM + MVS output
+eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/sfm_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/sfm_mesh.mvs --mesh-file ${SFM_DIR}/sfm_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/sfm_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
 
-# Use the new model for texturization
-cp mesh_file.ply ${SFM_DIR}/mesh_file.ply
-${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/${MODEL_NAME}_mesh.mvs --mesh-file mesh_file.ply --smooth 0 --working-folder ${SFM_DIR}
+# ----------------------------------------------------------------------
 
-# Mesh texturing for computing a sharp and accurate texture to color the mesh
-ORANGE=16744231
-YELLOW=16776960
-WHITE=16777215
-BLACK=0
-${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/${MODEL_NAME}_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
+# Create 3D model from hybrid point cloud
+${LOW_COST_3D_RECONSTRUCTION_DIR}/accumulate_clouds --all -i ${OBJECT_NAME}_transformed.ply -t ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/hybrid_model.ply
+eval ${MESHLABSERVER} -i ${SFM_DIR}/hybrid_model.ply -o ${SFM_DIR}/hybrid_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/hybrid_mesh.mvs --mesh-file ${SFM_DIR}/hybrid_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/hybrid_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
 
 rm ${SFM_DIR}/*.log
 
-# ----------------------------------------------------------------------
-
-# Copy result to current dir
-cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.png ${PWD}
-cp ${SFM_DIR}/${MODEL_NAME}_mesh_texture.ply ${PWD}

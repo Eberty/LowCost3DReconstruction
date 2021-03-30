@@ -93,19 +93,12 @@ ${LOW_COST_3D_RECONSTRUCTION_DIR}/scale -i ${OBJECT_NAME}_${SR}mesh_top.ply -o t
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/scale -i ${OBJECT_NAME}_${SR}mesh_bottom.ply -o bottom.ply --scale 0.01
 
 # Fix normals and remove outliers
-for i in $(seq 0 "$(( 10#${NUM_OF_CAPTURES} - 1 ))"); do
-  eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${i}.ply -o ${i}.ply --neighbors 50 --dev_mult 5.0
-  eval ${MESHLABSERVER} -i ${i}.ply -o ${i}.ply -m vc vn &> /dev/null
+FILES="$(ls +([0-9]).ply | sort -n) top.ply bottom.ply"
+for FILE in ${FILES}; do
+  echo "Processing file: ${FILE}"
+  ${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${FILE} -o ${FILE} --neighbors 50 --dev_mult 5.0 > /dev/null
+  eval ${MESHLABSERVER} -i ${FILE} -o ${FILE} -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
 done
-
-eval ${MESHLABSERVER} -i top.ply -o top.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
-${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i top.ply -o top.ply --neighbors 50 --dev_mult 5.0
-eval ${MESHLABSERVER} -i top.ply -o top.ply -m vc vn &> /dev/null
-
-eval ${MESHLABSERVER} -i bottom.ply -o bottom.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation.mlx &> /dev/null
-${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i bottom.ply -o bottom.ply --neighbors 50 --dev_mult 5.0
-eval ${MESHLABSERVER} -i bottom.ply -o bottom.ply -m vc vn &> /dev/null
 
 # ----------------------------------------------------------------------
 
@@ -129,6 +122,5 @@ ${LOW_COST_3D_RECONSTRUCTION_DIR}/centroid_align -i bottom.ply -t 0.ply -o botto
 
 # Fine alignment - TODO
 echo "----- Fine alignment -----"
-echo "For now use meshlab: Apply ICP align for all ply files, flatten layers and save as ${OBJECT_NAME}.ply"
-FILES=$(ls +([0-9]).ply | sort -n)
-eval ${MESHLAB} ${FILES} top.ply bottom.ply &> /dev/null
+echo "For now use meshlab to apply ICP alignment to all .ply files, flatten layers and save as ${OBJECT_NAME}.ply"
+eval ${MESHLAB} ${FILES} &> /dev/null

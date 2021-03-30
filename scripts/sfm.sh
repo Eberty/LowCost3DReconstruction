@@ -11,7 +11,7 @@
 for ARG in "${@:1}"; do
   if [[ ${ARG} == "-h" || ${ARG} == "--help" ]]; then
     echo "Usage: "
-    echo "    source ${BASH_SOURCE} [dense]"
+    echo "    source ${BASH_SOURCE}"
     return;
   fi
 done
@@ -61,32 +61,27 @@ ${OPENMVS_DIR}/InterfaceVisualSFM --input-file ${SFM_DIR}/model.nvm --working-fo
 
 # ----------------------------------------------------------------------
 
-# Remove unnecessary points that no belong to object
-${LOW_COST_3D_RECONSTRUCTION_DIR}/crop_cloud -i ${SFM_DIR}/model.ply -o ${SFM_DIR}/model_outlier_removal.ply --radius 3.0
-${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_estimation -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply --neighbors 50 --centroid
-eval ${MESHLABSERVER} -i ${SFM_DIR}/model_outlier_removal.ply -o ${SFM_DIR}/model_outlier_removal.ply -m vc vn -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/normal_normalize.mlx &> /dev/null
+# Run MVS densify point-cloud for obtaining a complete and accurate as possible point-cloud
+${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model.mvs --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model_dense.mvs --output-file model_dense.mvs --filter-point-cloud -1 --working-folder ${SFM_DIR}
+
+# Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
+# ${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model_dense_filtered.mvs --remove-spurious 60 --working-folder ${SFM_DIR}
+
+# Mesh refinement for recovering all fine details
+# ${OPENMVS_DIR}/RefineMesh --input-file ${SFM_DIR}/model_dense_filtered_mesh.mvs --resolution-level 1 --working-folder ${SFM_DIR}
+
+# Mesh texturing for computing a sharp and accurate texture to color the mesh
+# ${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/model_dense_filtered_mesh_refine.mvs --export-type ply --working-folder ${SFM_DIR}
+
+rm ${SFM_DIR}/*.log
 
 # ----------------------------------------------------------------------
 
-# Run MVS densify point-cloud for obtaining a complete and accurate as possible point-cloud
-if [[ ${1} && "${1,,}" == "dense" ]]; then
-  ${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model.mvs --working-folder ${SFM_DIR}
-  ${OPENMVS_DIR}/DensifyPointCloud --input-file ${SFM_DIR}/model_dense.mvs --output-file model_dense.mvs --filter-point-cloud -1 --working-folder ${SFM_DIR}
+# Crop, downsampling, planar segmentation and outlier removal
+${LOW_COST_3D_RECONSTRUCTION_DIR}/crop_cloud -i ${SFM_DIR}/model_dense_filtered.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 2.5
+${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
+${LOW_COST_3D_RECONSTRUCTION_DIR}/planar_segmentation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --threshold 0.05
+${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --dev_mult 5.0
 
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/crop_cloud -i ${SFM_DIR}/model_dense_filtered.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --radius 2.5
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --leaf_size 0.01
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/planar_segmentation -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --threshold 0.05
-  ${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply --neighbors 50 --dev_mult 5.0
-  eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn &> /dev/null
-
-  # Mesh reconstruction for estimating a mesh surface that explains the best the input point-cloud
-  # ${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model_dense_filtered.mvs --output-file ${SFM_DIR}/sfm_dense_mesh.mvs --remove-spurious 60 --working-folder ${SFM_DIR}
-
-  # Mesh refinement for recovering all fine details
-  # ${OPENMVS_DIR}/RefineMesh --input-file ${SFM_DIR}/sfm_dense_mesh.mvs --resolution-level 1 --working-folder ${SFM_DIR}
-
-  # Mesh texturing for computing a sharp and accurate texture to color the mesh
-  # ${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/sfm_dense_mesh_refine.mvs --export-type ply --working-folder ${SFM_DIR}
-fi
-
-rm ${SFM_DIR}/*.log
+eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/model_dense_outlier_removal.ply -m vc vn &> /dev/null

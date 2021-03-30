@@ -65,17 +65,17 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt install -y git-lfs
 git lfs install
 
-# ------------- cmake latest version -------------
+# ------------- cmake -------------
 
 cmake_version="$(echo $(cmake --version) | grep -Po '(\d+.*\d+)(?=\.)')"
 if [[ ( ${cmake_version%%.*} < 3 ) || ( ${cmake_version%%.*} == 3 && ( 1 -eq "$(echo "${cmake_version##*.} < 10" | bc)" ) ) ]]; then
-  echo "Cmake minimum version required: 3.10"
+  echo "Cmake minimum required version: 3.10"
 
   sudo apt purge cmake -y
   version=3.10
   build=3
   wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
-  tar -xzvf cmake-$version.$build.tar.gz
+  tar -xzvf cmake-$version.$build.tar.gz > /dev/null
   rm cmake-$version.$build.tar.gz
   cd cmake-$version.$build
 
@@ -109,12 +109,11 @@ sudo apt install -y libturbojpeg0-dev # Ubuntu 17.10 and newer
 
 git clone https://github.com/OpenKinect/libfreenect2.git libfreenect2
 cd libfreenect2
+sudo cp ./platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 mkdir build
 cd build
 cmake ..
 make -j$(nproc) && sudo make install
-
-sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 
 cd ${CUR_DIR}
 

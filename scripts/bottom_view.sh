@@ -57,10 +57,15 @@ MESHLABSERVER="LC_ALL=C ${LOW_COST_3D_RECONSTRUCTION_DIR}/MeshLabServer2020.12-l
 # Set mesh file name
 FILE_NAME=${1}
 
-# Working directory
-cp ${FILE_NAME} ${SFM_DIR}/${FILE_NAME}
-for IMG in "${@:2}"; do
-  cp ${IMG} ${SFM_DIR}/
+# Mesh empty colors
+ORANGE=16744231
+WHITE=16777215
+BLACK=0
+
+# Input images path
+IMAGES=( "${@:2}" )
+for i in "${!IMAGES[@]}"; do
+  IMAGES[${i}]="$(readlink -nf ${IMAGES[${i}]})"
 done
 
 # ----------------------------------------------------------------------
@@ -80,7 +85,7 @@ done < "${SFM_DIR}/bundle-list.txt"
 # ----------------------------------------------------------------------
 
 # Merge bundle files
-${LOW_COST_3D_RECONSTRUCTION_DIR}/bundle_merge -i ${@:2} -m ${SFM_DIR}/${FILE_NAME} -b ${SFM_DIR}/bundle.out -l ${SFM_DIR}/bundle-list.txt -p merged
+${LOW_COST_3D_RECONSTRUCTION_DIR}/bundle_merge -i ${IMAGES[@]} -m ${FILE_NAME} -b ${SFM_DIR}/bundle.out -l ${SFM_DIR}/bundle-list.txt -p merged
 rm ${SFM_DIR}/bundle.out
 rm ${SFM_DIR}/bundle-list.txt
 
@@ -88,13 +93,7 @@ rm ${SFM_DIR}/bundle-list.txt
 
 # Use the new file for texturization
 ${OPENMVS_DIR}/InterfaceVisualSFM --input-file ${SFM_DIR}/merged.bundle.out --output-file ${SFM_DIR}/final.mvs --working-folder ${SFM_DIR}
-${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/final.mvs --mesh-file ${SFM_DIR}/mesh_file.ply --smooth 0 --working-folder ${SFM_DIR}
-
-# Mesh texturing for computing a sharp and accurate texture to color the mesh
-ORANGE=16744231
-YELLOW=16776960
-WHITE=16777215
-BLACK=0
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/final.mvs --mesh-file ${SFM_DIR}/hybrid_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
 ${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --working-folder ${SFM_DIR} --export-type ply --close-holes 50 --resolution-level 1
 
 rm ${SFM_DIR}/*.log
