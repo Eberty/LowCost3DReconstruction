@@ -60,6 +60,7 @@ ${Super4PCS_BIN} -i ${SFM_DIR}/model_dense_outlier_removal.ply ${OBJECT_NAME}.pl
 sed -i '1,2d' tmp.txt
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/transform -i ${OBJECT_NAME}.ply -o ${OBJECT_NAME}_transformed.ply -t tmp.txt
 ${LOW_COST_3D_RECONSTRUCTION_DIR}/cloud_downsampling -i ${OBJECT_NAME}_transformed.ply -o ${OBJECT_NAME}_transformed.ply --leaf_size 0.01
+${LOW_COST_3D_RECONSTRUCTION_DIR}/outlier_removal -i ${OBJECT_NAME}_transformed.ply -o ${OBJECT_NAME}_transformed.ply --neighbors 100 --dev_mult 5.0
 eval ${MESHLABSERVER} -i ${OBJECT_NAME}_transformed.ply -o ${OBJECT_NAME}_transformed.ply -m vc vn &> /dev/null
 
 # Also transform individual files
@@ -87,17 +88,17 @@ ${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/kinect_mesh.mvs --patch-packi
 # ----------------------------------------------------------------------
 
 # Create 3D model from SFM + MVS output
-eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/sfm_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
-${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/sfm_mesh.mvs --mesh-file ${SFM_DIR}/sfm_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
-${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/sfm_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
+eval ${MESHLABSERVER} -i ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/mvs_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/mvs_mesh.mvs --mesh-file ${SFM_DIR}/mvs_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/mvs_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
 
 # ----------------------------------------------------------------------
 
-# Create 3D model from hybrid point cloud
-${LOW_COST_3D_RECONSTRUCTION_DIR}/accumulate_clouds --all -i ${OBJECT_NAME}_transformed.ply -t ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/hybrid_model.ply
-eval ${MESHLABSERVER} -i ${SFM_DIR}/hybrid_model.ply -o ${SFM_DIR}/hybrid_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
-${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/hybrid_mesh.mvs --mesh-file ${SFM_DIR}/hybrid_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
-${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/hybrid_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
+# Create 3D model from merged point cloud
+${LOW_COST_3D_RECONSTRUCTION_DIR}/accumulate_clouds --all -i ${OBJECT_NAME}_transformed.ply -t ${SFM_DIR}/model_dense_outlier_removal.ply -o ${SFM_DIR}/merged_model.ply
+eval ${MESHLABSERVER} -i ${SFM_DIR}/merged_model.ply -o ${SFM_DIR}/merged_poisson.ply -m vc vq -s ${LOW_COST_3D_RECONSTRUCTION_DIR}/mesh_reconstruction.mlx 2> /dev/null
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/model.mvs --output-file ${SFM_DIR}/merged_mesh.mvs --mesh-file ${SFM_DIR}/merged_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/merged_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --export-type ply --close-holes 50 --resolution-level 1 --working-folder ${SFM_DIR}
 
 rm ${SFM_DIR}/*.log
 

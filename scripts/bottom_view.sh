@@ -93,7 +93,7 @@ rm ${SFM_DIR}/bundle-list.txt
 
 # Use the new file for texturization
 ${OPENMVS_DIR}/InterfaceVisualSFM --input-file ${SFM_DIR}/merged.bundle.out --output-file ${SFM_DIR}/final.mvs --working-folder ${SFM_DIR}
-${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/final.mvs --mesh-file ${SFM_DIR}/hybrid_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
+${OPENMVS_DIR}/ReconstructMesh --input-file ${SFM_DIR}/final.mvs --mesh-file ${SFM_DIR}/merged_poisson.ply --smooth 0 --working-folder ${SFM_DIR}
 ${OPENMVS_DIR}/TextureMesh --input-file ${SFM_DIR}/final_mesh.mvs --patch-packing-heuristic 0 --cost-smoothness-ratio 1 --empty-color ${BLACK} --working-folder ${SFM_DIR} --export-type ply --close-holes 50 --resolution-level 1
 
 rm ${SFM_DIR}/*.log
