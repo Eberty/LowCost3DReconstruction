@@ -4,7 +4,7 @@
 
 ## **Overview**
 
-The performance of traditional 3D capture methods directly influences the quality of digitally reconstructed 3D models. To obtain complete and well detailed three-dimensional models, with considerable visual quality, using low-cost methodologies, this project proposes a 3D reconstruction pipeline using point clouds from different sensors, combining captures of a low-cost depth sensor post-processed by Super-Resolution (SR) techniques with high-resolution RGB images from an external camera using structure-from-motion (SFM) and multi-view-stereo (MVS) output data. The main contribution of this work includes the description of a complete pipeline that improves the stage of information acquisition and makes the merging of data from different sensors.
+This project proposes a low cost 3D reconstruction pipeline using point clouds from different sensors, combining captures of a low-cost depth sensor post-processed by Super-Resolution (SR) techniques with high-resolution RGB images from an external camera using structure-from-motion (SFM) and multi-view-stereo (MVS) output data.
 
 Several phases of the 3D reconstruction pipeline were also specialized to improve the model's visual quality: from the acquisition of depth and color images, alignment of captures and mesh generation, down to the texturing and realistic visualization step.
 
