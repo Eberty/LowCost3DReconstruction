@@ -8,6 +8,8 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/io/ply_io.h>
 
+#include <pcl/common/impl/io.hpp>
+
 // Boost library
 #include <boost/program_options.hpp>
 

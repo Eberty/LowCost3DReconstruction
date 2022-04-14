@@ -7,7 +7,6 @@ CUR_DIR=${PWD}
 sudo apt update
 sudo apt install -y \
   bc \
-  beignet-dev \
   build-essential \
   cmake \
   curl \
@@ -53,6 +52,9 @@ sudo apt install -y \
   qtbase5-dev \
   tar \
   wget
+
+sudo apt install -y libmetis-dev
+sudo apt install -y beignet-dev
 
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.a /usr/lib/libglut.a
 sudo ln -s /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/libglut.so

@@ -18,13 +18,14 @@
 #include <boost/program_options.hpp>
 
 // Point cloud library
-#include <pcl/search/impl/search.hpp>
-
 #include <pcl/common/transforms.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/filter.h>
 #include <pcl/io/ply_io.h>
+
+#include <pcl/common/impl/io.hpp>
+#include <pcl/search/impl/search.hpp>
 
 // Maximum value that a float pixel will take on in the buffer
 #define KINECT2_DEPTH_MM_MAX_VALUE 4500.0

@@ -11,6 +11,8 @@
 #include <pcl/point_types.h>
 #include <pcl/registration/icp.h>
 
+#include <pcl/common/impl/io.hpp>
+
 // Boost library
 #include <boost/program_options.hpp>
 

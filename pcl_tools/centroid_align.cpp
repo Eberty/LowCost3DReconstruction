@@ -12,6 +12,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+#include <pcl/common/impl/io.hpp>
+
 // Boost library
 #include <boost/program_options.hpp>
 
