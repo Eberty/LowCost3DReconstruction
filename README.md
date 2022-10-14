@@ -1,6 +1,6 @@
 # 3D reconstruction pipeline from depth and color cameras
 
-**NOTE:** this repository is still in development. Any suggestion or improvement please contact us. Feel free to use it and collaborate.
+**NOTE:** this repository is in development. Any suggestion or improvement please contact us. Feel free to use it and collaborate.
 
 ## **Overview**
 
@@ -22,6 +22,13 @@ The source code is released under the [MIT](https://github.com/Eberty/LowCost3DR
 **Maintainer:** Eberty Alves da Silva, <eberty.silva@hotmail.com>
 
 The `LowCost3DReconstruction` package has been tested under *Ubuntu 16.04 LTS*.
+
+&nbsp;
+
+### **Publications**
+
+**Paper:** https://doi.org/10.5335/rbca.v14i2.13045 (english)\
+**Master's thesis:** https://repositorio.ufba.br/handle/ri/36086 (portuguease)
 
 &nbsp;
 
